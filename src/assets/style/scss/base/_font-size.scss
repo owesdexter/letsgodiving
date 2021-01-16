@@ -1,0 +1,176 @@
+/*------------------Customized------------------*/
+    .text-xs{
+        font-size: $font-size-base * 0.5 !important;
+    }
+
+    .text-s{
+        font-size: $font-size-base * 0.875 !important;
+    }
+
+    .text-m{
+        font-size: $font-size-base !important;
+    }
+
+    .text-h5{
+        font-size: $font-size-base * 1.25 !important;
+    }
+
+    .text-h4{
+        font-size: $font-size-base * 1.5 !important;
+    }
+
+    .text-h3{
+        font-size: $font-size-base * 1.75 !important;
+    }
+
+    .text-h2{
+        font-size: $font-size-base * 2 !important;
+    }
+
+    .text-h1{
+        font-size: $font-size-base * 2.5 !important;
+    }
+
+
+
+/*------------------Small PC size------------------*/
+@media (max-width: 1200px){
+    .text-xl-xs{
+        font-size: $font-size-base * 0.5 !important;
+    }
+
+    .text-xl-s{
+        font-size: $font-size-base * 0.875 !important;
+    }
+
+    .text-xl-m{
+        font-size: $font-size-base !important;
+    }
+
+    .h5-xl{
+        font-size: $font-size-base * 1.25 !important;
+    }
+
+    .h4-xl{
+        font-size: $font-size-base * 1.5 !important;
+    }
+
+    .h3-xl{
+        font-size: $font-size-base * 1.75 !important;
+    }
+
+    .h2-xl{
+        font-size: $font-size-base * 2 !important;
+    }
+
+    .h1-xl{
+        font-size: $font-size-base * 2.5 !important;
+    }
+}
+
+
+/*------------------PAD------------------*/
+@media (max-width: 992px){
+    .text-lg-xs{
+        font-size: $font-size-base * 0.5 !important;
+    }
+    
+    .text-lg-s{
+        font-size: $font-size-base * 0.875 !important;
+    }
+    
+    .text-lg-m{
+        font-size: $font-size-base !important;
+    }
+    
+    .h5-lg{
+        font-size: $font-size-base * 1.25 !important;
+    }
+    
+    .h4-lg{
+        font-size: $font-size-base * 1.5 !important;
+    }
+    
+    .h3-lg{
+        font-size: $font-size-base * 1.75 !important;
+    }
+    
+    .h2-lg{
+        font-size: $font-size-base * 2 !important;
+    }
+    
+    .h1-lg{
+        font-size: $font-size-base * 2.5 !important;
+    }
+}
+
+/*----------------------Mobile----------------------*/
+@media (max-width: 768px){
+    .text-md-xs{
+        font-size: $font-size-base * 0.5 !important;
+    }
+    
+    .text-md-s{
+        font-size: $font-size-base * 0.875 !important;
+    }
+    
+    .text-md-m{
+        font-size: $font-size-base !important;
+    }
+    
+    .h5-md{
+        font-size: $font-size-base * 1.25 !important;
+    }
+    
+    .h4-md{
+        font-size: $font-size-base * 1.5 !important;
+    }
+    
+    .h3-md{
+        font-size: $font-size-base * 1.75 !important;
+    }
+    
+    .h2-md{
+        font-size: $font-size-base * 2 !important;
+    }
+    
+    .h1-md{
+        font-size: $font-size-base * 2.5 !important;
+    }
+}
+
+/*----------------------Small Mobliles----------------------*/
+@media (max-width: 400px){
+    .text-sm-xs{
+        font-size: $font-size-base * 0.5 !important;
+    }
+    
+    .text-sm-s{
+        font-size: $font-size-base * 0.875 !important;
+    }
+    
+    .text-sm-m{
+        font-size: $font-size-base !important;
+    }
+    
+    .h5-sm{
+        font-size: $font-size-base * 1.25 !important;
+    }
+    
+    .h4-sm{
+        font-size: $font-size-base * 1.5 !important;
+    }
+    
+    .h3-sm{
+        font-size: $font-size-base * 1.75 !important;
+    }
+    
+    .h2-sm{
+        font-size: $font-size-base * 2 !important;
+    }
+    
+    .h1-sm{
+        font-size: $font-size-base * 2.5 !important;
+    }
+}
+

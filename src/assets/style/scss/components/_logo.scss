@@ -1,0 +1,12 @@
+.logo{
+	background-image: url(~@/assets/style/css/imgs/logo-white.png);   /* insert logo path */
+	background-repeat: no-repeat;
+	background-position: bottom;
+	background-size: cover;
+	width: 35px;
+	height: 35px;
+	display: block; 
+	text-indent: 101%;     /* Indent the text to make it out of container range */
+	white-space: nowrap;   /* no wrap */
+	overflow: hidden;     /* Hide the exceeded portion of picture */
+}
