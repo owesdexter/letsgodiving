@@ -42,7 +42,7 @@
           store.commit('getData');
           let profile = await FB_SDK.checkLoginStatus();
           await store.commit('storeProfile', profile);
-          console.log(store.state.profile)
+          // console.log(store.state.profile)
         })();
       })
 

@@ -20,7 +20,6 @@
 
       const store = useStore();
       onMounted(()=>{
-        console.log("clear")
         store.commit('clearSearchConds')
       })
 

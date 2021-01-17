@@ -140,6 +140,7 @@ export const store = createStore({
     },
   
     storeProfile: (state, payload) => {
+      console.log('storeProfile');
       state.profile = payload;
     },
   

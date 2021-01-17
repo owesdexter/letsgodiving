@@ -24,6 +24,7 @@
       }) 
 
       onMounted(()=>{
+        console.log('btn mounted')
         if(loginProps.loginStatus==false){
           loginProps.loginButtonText = 'LOGIN'
         }else{
@@ -33,15 +34,19 @@
 
       async function fbLogin(){
         if(loginProps.loginStatus==false){
+          console.log('start login');
           let profile = await FB_SDK.FBlogin();
           await store.commit('storeProfile', profile);
+          window.location.reload();
           // store.commit('updateActDisplay');
         }else{
           let profile = await FB_SDK.FBlogout();
+          console.log('start logout');
           await store.commit('storeProfile', profile);
           store.commit('cleanCart');
+          window.location.reload();
         }
-        window.location.reload();
+        
       }
 
       return{
