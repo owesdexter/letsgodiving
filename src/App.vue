@@ -40,6 +40,7 @@
         (async ()=>{
           console.log('re-render app');
           store.commit('getData');
+          // store.commit('checkLoginStatus');
           // console.log('before check: ' +store.state.profile.loginStatus)
           // let profile = await FB_SDK.checkLoginStatus();
           // await store.commit('storeProfile', profile);

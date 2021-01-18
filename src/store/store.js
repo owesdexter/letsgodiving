@@ -7,7 +7,15 @@ export const store = createStore({
   state: {
     activities: [],
     actDisplay: [],
-    profile: {},
+    profile: {
+      loginStatus: false,
+      id:  '',
+      name: '請先登入',
+      userPicURL: '',
+      link: '',
+      cartIndexArr: [],
+      cartArr: [],
+    },
     selectedStartDate: '',
     selectedEndDate: '',
     selectedArea: '',
@@ -32,6 +40,32 @@ export const store = createStore({
   },
 
   mutations: {
+    checkLoginStatus: (state)=>{
+      if (state.profile.loginStatus==true) {
+        window.FB.api("/me", "GET", { fields: 'id, name, picture, link' }, function (response) {
+            if (response.error) {
+              console.log(response);
+            } else {
+              state.profile.loginStatus = true;
+              state.profile.id =  response.id;
+              state.profile.name = response.name;
+              state.profile.userPicURL = response.picture.data.url;
+              state.profile.link = 'https://www.facebook.com/juzhong.chen';
+              console.log('Loggined');
+            }
+        });
+      }else{
+        state.profile.loginStatus = false;
+        state.profile.id =  '';
+        state.profile.name = '請先登入';
+        state.profile.userPicURL = '';
+        state.profile.link = '';
+        state.profile.cartIndexArr = [];
+        state.profile.cartArr = [];
+        console.log('Unloggined');
+      }
+    },
+
     getData: state => {
         axios.get('https://dss-v-profolio.firebaseio.com/activity.json')
             .then(res => {
@@ -121,9 +155,6 @@ export const store = createStore({
         return targetArr;
       }
     },
-
-
-
 
 
 

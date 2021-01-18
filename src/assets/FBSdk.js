@@ -53,16 +53,16 @@ function profileChange(res, resolve){
   }
 }
 
-function checkLoginStatus(){
-  return new Promise( (resolve)=>{
-    setTimeout(()=>{
-      window.FB.getLoginStatus(function(res) {
-        profileChange(res, resolve)
-        console.log('check: '+res.status)
-      });
-    },500)
-  });
-}
+// function checkLoginStatus(){
+//   return new Promise( (resolve)=>{
+//     setTimeout(()=>{
+//       window.FB.getLoginStatus(function(res) {
+//           profileChange(res, resolve)
+//           console.log('check: '+res.status)
+//       });
+//     },500)
+//   });
+// }
 
 function FBlogin(){
   return new Promise( (resolve)=>{
@@ -96,7 +96,7 @@ function test(){
 
 var fbSDKMethods = {
   initFbSdk,
-  checkLoginStatus,
+  // checkLoginStatus,
   FBlogin,
   FBlogout,
   test
