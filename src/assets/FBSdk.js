@@ -75,7 +75,7 @@ function FBlogin(){
 function FBlogout(){
   return new Promise( (resolve)=>{
     window.FB.getLoginStatus(function(res) {
-      if(res.status=='connect'){
+      if(res.status=='connected'){
         window.FB.logout(function(res){
           console.log("FB start logout");
           profileChange(res, resolve);
