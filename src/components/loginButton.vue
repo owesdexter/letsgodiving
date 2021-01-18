@@ -35,18 +35,18 @@
 
       onMounted(()=>{
         console.log('Login status when btn is Mounted: '+store.state.profile.loginStatus)
-        if(store.state.profile.loginStatus==true){
-          loginProps.loginStatus = true;
-          loginProps.loginButtonText = 'LOGOUT';
-        }else{
-          loginProps.loginStatus = false;
-          loginProps.loginButtonText = 'LOGIN';
-        }
+        // if(store.state.profile.loginStatus==true){
+        //   loginProps.loginStatus = true;
+        //   loginProps.loginButtonText = 'LOGOUT';
+        // }else{
+        //   loginProps.loginStatus = false;
+        //   loginProps.loginButtonText = 'LOGIN';
+        // }
       })
 
       async function fbLogin(){
         console.log('btn has been triggered')
-        console.log('login stastus when btn is triggered: ' + store.state.profile.loginStatus + 'when btn has been triggered')
+        console.log('login stastus when btn is triggered: ' + store.state.profile.loginStatus)
 
         if(store.state.profile.loginStatus==true){
           console.log('start logout');
@@ -63,7 +63,7 @@
           console.log('start login');
           let profile = await FB_SDK.FBlogin();
           await store.commit('storeProfile', profile);
-          window.location.reload();
+          // window.location.reload();
           // setTimeout(()=>window.location.reload(),500);
           // console.log('btn:' + loginProps.loginStatus)
           // console.log('store:' + store.state.profile.loginStatus);
