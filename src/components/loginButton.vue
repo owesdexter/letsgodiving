@@ -19,34 +19,53 @@
       const store = useStore();
 
       const loginProps = reactive({
-        loginStatus: computed(() => store.state.profile.loginStatus),
-        loginButtonText: '',
+        loginStatus: computed(() => {
+          console.log('btn status computed');
+            return store.state.profile.loginStatus
+          }),
+        loginButtonText: computed(() => {
+          console.log('btn text computed')
+          if(store.state.profile.loginStatus==true){
+            return 'LOGOUT'
+          }else{
+            return 'LOGIN'
+          }
+        })
       }) 
 
       onMounted(()=>{
-        console.log('btn mounted')
-        if(loginProps.loginStatus==false){
-          loginProps.loginButtonText = 'LOGIN'
+        console.log('Login status when btn is Mounted: '+store.state.profile.loginStatus)
+        if(store.state.profile.loginStatus==true){
+          loginProps.loginStatus = true;
+          loginProps.loginButtonText = 'LOGOUT';
         }else{
-          loginProps.loginButtonText = 'LOGOUT'
+          loginProps.loginStatus = false;
+          loginProps.loginButtonText = 'LOGIN';
         }
       })
 
       async function fbLogin(){
-        if(loginProps.loginStatus==false){
+        console.log('btn has been triggered')
+        console.log(store.state.profile.loginStatus)
+
+        if(store.state.profile.loginStatus==true){
+          console.log('start logout');
+          let profile = await FB_SDK.FBlogout();
+          await store.commit('storeProfile', profile);
+          window.location.reload();
+          store.commit('cleanCart');
+          store.commit('updateActDisplay')
+          // console.log('btn:' + loginProps.loginStatus)
+          // console.log('store:' + store.state.profile.loginStatus);
+
+        }else{
           console.log('start login');
           let profile = await FB_SDK.FBlogin();
           await store.commit('storeProfile', profile);
           window.location.reload();
-          // store.commit('updateActDisplay');
-        }else{
-          let profile = await FB_SDK.FBlogout();
-          console.log('start logout');
-          await store.commit('storeProfile', profile);
-          store.commit('cleanCart');
-          window.location.reload();
+          // console.log('btn:' + loginProps.loginStatus)
+          // console.log('store:' + store.state.profile.loginStatus);
         }
-        
       }
 
       return{

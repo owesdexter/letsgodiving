@@ -71,12 +71,19 @@
       const isRight = (i) => i % 2;
 
       onMounted(()=>{
-        // var v1 = parseInt(items.totalFee);
+        var i =1;
         for(let act of items.actResource){
-          items.totalFee+=act.details.fee;
+          let v1 = parseInt(act.details.fee);
+          if(!v1){
+            v1=0;
+          }
+          // var v2 = parseInt(items.totalFee);
+          items.totalFee = (v1+parseInt(items.totalFee))
+          console.log('The '+ i +' time total: '+ items.totalFee);
+          i++;
         }
-        items.totalFee = parseInt(items.totalFee)
-        console.log(items.totalFee)
+        // items.totalFee = v2;
+
       });
 
       provide('index',items.index);

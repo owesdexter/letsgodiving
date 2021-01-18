@@ -140,8 +140,9 @@ export const store = createStore({
     },
   
     storeProfile: (state, payload) => {
-      console.log('storeProfile');
       state.profile = payload;
+      console.log('storeProfile');
+      console.log('');
     },
   
     clearSearchConds: (state) => {

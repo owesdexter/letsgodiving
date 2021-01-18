@@ -38,10 +38,11 @@
 
       onMounted(()=>{
         (async ()=>{
-          console.log("rerender app")
+          console.log('re-render app');
           store.commit('getData');
-          let profile = await FB_SDK.checkLoginStatus();
-          await store.commit('storeProfile', profile);
+          // console.log('before check: ' +store.state.profile.loginStatus)
+          // let profile = await FB_SDK.checkLoginStatus();
+          // await store.commit('storeProfile', profile);
           // console.log(store.state.profile)
         })();
       })

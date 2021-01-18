@@ -23,6 +23,7 @@ function initFbSdk (){
 
 var userProfile ={};
 function profileChange(res, resolve){
+  console.log('profilechange')
   if (res.status === 'connected') {
     window.FB.api("/me", "GET", { fields: 'id, name, picture, link' }, function (response) {
         if (response.error) {
@@ -35,7 +36,7 @@ function profileChange(res, resolve){
           userProfile.link = 'https://www.facebook.com/juzhong.chen';
           userProfile.cartIndexArr = [];
           userProfile.cartArr = [];
-          console.log('User is loggined');
+          console.log('Loggined');
           resolve(userProfile);
         }
     });
@@ -47,7 +48,7 @@ function profileChange(res, resolve){
     userProfile.link = '';
     userProfile.cartIndexArr = [];
     userProfile.cartArr = [];
-    console.log('User is unloggined');
+    console.log('Unloggined');
     resolve(userProfile);
   }
 }
@@ -57,6 +58,7 @@ function checkLoginStatus(){
     setTimeout(()=>{
       window.FB.getLoginStatus(function(res) {
         profileChange(res, resolve)
+        console.log('check: '+res.status)
       });
     },500)
   });
@@ -73,11 +75,11 @@ function FBlogin(){
 function FBlogout(){
   return new Promise( (resolve)=>{
     window.FB.getLoginStatus(function(res) {
-      if (res.status === 'connected') {
-        window.FB.logout(function(res){
+      // if (res.status === 'connected') {
+      //   window.FB.logout(function(res){
           profileChange(res, resolve)
-        });
-      }
+      //   });
+      // }
     });
   })
 }
