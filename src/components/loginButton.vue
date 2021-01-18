@@ -52,7 +52,7 @@
           console.log('start logout');
           let profile = await FB_SDK.FBlogout();
           await store.commit('storeProfile', profile);
-          window.location.reload();
+          setTimeout(()=>window.location.reload(),500);
           store.commit('cleanCart');
           store.commit('updateActDisplay')
           // console.log('btn:' + loginProps.loginStatus)
@@ -62,7 +62,7 @@
           console.log('start login');
           let profile = await FB_SDK.FBlogin();
           await store.commit('storeProfile', profile);
-          window.location.reload();
+          setTimeout(()=>window.location.reload(),500);
           // console.log('btn:' + loginProps.loginStatus)
           // console.log('store:' + store.state.profile.loginStatus);
         }

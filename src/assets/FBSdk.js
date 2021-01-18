@@ -75,11 +75,7 @@ function FBlogin(){
 function FBlogout(){
   return new Promise( (resolve)=>{
     window.FB.getLoginStatus(function(res) {
-      // if (res.status === 'connected') {
-      //   window.FB.logout(function(res){
-          profileChange(res, resolve)
-      //   });
-      // }
+      profileChange(res, resolve)
     });
   })
 }
