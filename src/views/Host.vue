@@ -3,11 +3,9 @@
     <h2 class="mb-2 mb-md-3 h3-md">個人檔案</h2>
     <div class="row">
       <div class="host-profile-box col-12 col-md-8 d-flex p-2 p-md-3 mb-3 mb-md-4">
+        
         <div class="fb-profile d-flex flex-column align-items-center">
-          <!-- <fb-profile/> -->
-          <img :src="`${items.activity.host.userPicURL}`" class="host-img d-block mb-2" v-if="items.isLogin">
-          <img src="@/assets/imgs/unloggined.png" class="host-img unloggined-img d-block mb-2" v-if="!items.isLogin">
-          <p class="text-center text-lg-m text-h5">{{items.activity.host.name}}</p>
+          <host-fb-profile/>
         </div>
         
         <contact-info/>
@@ -103,6 +101,7 @@
   import axios from 'axios';
   import contactInfo from '../components/contactInfo'
   import DatepickerLite from "vue3-datepicker-lite";
+  import hostFbProfile from "../components/hostFbProfile"
 
   export default{ 
     setup(){
@@ -129,7 +128,7 @@
             description: '',
           },
           isAdded: false,
-          eventid:'',
+          eventID:'',
           index:'',
 
           changeStart: (Start) => {
@@ -151,10 +150,7 @@
           & isNaN(items.activity.details.area) 
           & isNaN(items.activity.details.date.start) 
           & isNaN(items.activity.details.date.end))){
-
-            console.log('result: '+!(isNaN(items.activity.details.title) & isNaN(items.activity.details.area) & isNaN(items.activity.details.date.start) & isNaN(items.activity.details.date.end)))
             items.isSubmitErr = true;
-
           }else{
             // Submit activity
             let act = items.activity;
@@ -164,9 +160,8 @@
               act.details.date.start = items.activity.details.date.end;
               act.details.date.end = replacement;
             }
-            act.id = now.getTime();
+            act.eventID = now.getTime();
             axios.post('https://dss-v-profolio.firebaseio.com/activity.json', act);
-            console.log(store.state.profile)
             store.commit('updateActDisplay')
           }
           
@@ -188,8 +183,7 @@
         submitDetail,
         DatepickerLite,
         contactInfo,
-        // blockUnlogin
-        // fbProfile,
+        hostFbProfile
       }
 
     }
@@ -217,9 +211,7 @@
   }
 
   /*--------------------------HostProfile--------------------------*/
-  .fb-profile{
-    width: 100px;
-  }
+
 
   .host-profile-box{
     border-radius: 20px;

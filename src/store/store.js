@@ -7,6 +7,7 @@ export const store = createStore({
   state: {
     activities: [],
     actDisplay: [],
+    actForSearch: [],
     profile: {
       loginStatus: false,
       id:  '',
@@ -16,101 +17,62 @@ export const store = createStore({
       cartIndexArr: [],
       cartArr: [],
     },
-    selectedStartDate: '',
-    selectedEndDate: '',
-    selectedArea: '',
-    localData:{
-      profile:{},
-      cartIndexArr:[],
-      cartArr:[],
-    },
-  },
-
-  getters: {
-    activities: state =>{
-      return state.activities;
-    },
-    actDisplay: state =>{
-      return state.activities;
-    },
-    cartArr: state =>{
-      return state.cartArr;
-    } 
-
+    searchConds:{
+      selectedStartDate: '',
+      selectedEndDate: '',
+      selectedArea: '', 
+    }
   },
 
   mutations: {
-    checkLoginStatus: (state)=>{
-      if (state.profile.loginStatus==true) {
-        window.FB.api("/me", "GET", { fields: 'id, name, picture, link' }, function (response) {
-            if (response.error) {
-              console.log(response);
-            } else {
-              state.profile.loginStatus = true;
-              state.profile.id =  response.id;
-              state.profile.name = response.name;
-              state.profile.userPicURL = response.picture.data.url;
-              state.profile.link = 'https://www.facebook.com/juzhong.chen';
-              console.log('Loggined');
-            }
-        });
-      }else{
-        state.profile.loginStatus = false;
-        state.profile.id =  '';
-        state.profile.name = '請先登入';
-        state.profile.userPicURL = '';
-        state.profile.link = '';
-        state.profile.cartIndexArr = [];
-        state.profile.cartArr = [];
-        console.log('Unloggined');
-      }
-    },
-
     getData: state => {
         axios.get('https://dss-v-profolio.firebaseio.com/activity.json')
             .then(res => {
-                console.log("getData")
-
+                console.log("getData from DB")
                 const resultArray = [];
                 for (let key in res.data) {
-                    resultArray.unshift(res.data[key]);
+                  resultArray.unshift(res.data[key]);
                 }
-                
                 state.activities = resultArray;
-                // state.actDisplay = resultArray;
+              
+            }).then(()=>{
+                for (let key in state.activities){
+                  state.activities[key].index = key;
+                }
+                state.actForSearch = state.activities;
+
+                if(state.profile.loginStatus==false){
+                  state.actDisplay = state.activities;
+                }
             });
     },
 
-    Search: (state) =>{
+
+
+    search: (state) =>{
       return new Promise( (resolve)=>{
         let searchResultByStart = [];
-        console.log("selected start: " + state.selectedStartDate)
-        console.log("selected end: " + state.selectedEndDate);
-        console.log("selected area: " + state.selectedArea)
-        let selectedStart = Date.parse(state.selectedStartDate);
+        console.log("selected start: " + state.searchConds.selectedStartDate)
+        console.log("selected end: " + state.searchConds.selectedEndDate);
+        console.log("selected area: " + state.searchConds.selectedArea)
+        let selectedStart = Date.parse(state.searchConds.selectedStartDate);
 
         if(isNaN(selectedStart)){
           console.log("----------Without checking Start----------")
           resolve(state.activities)
         }else{
           console.log("----------Result after checking Start:----------")
-          // let selectedStart = Date.parse(state.selectedStartDate);
-          // console.log(selectedStart)
           for (let activityVar1 of state.activities){
             if((selectedStart - Date.parse(activityVar1.details.date.start))<=0){
               console.log(activityVar1.details.title)
               searchResultByStart.push(activityVar1);
             }
           }
-          // if (searchResultByStart==[]){
-          //   reject(console.log("No result"))
-          // }
           resolve(searchResultByStart); 
         }
+
       }).then((searchResultByStart)=>{
-        // console.log(searchResultByStart)
-        // console.log(searchResultByStart[searchResultByStart.length-1].details.title)
-        let selectedEnd = Date.parse(state.selectedEndDate);
+        let selectedEnd = Date.parse(state.searchConds.selectedEndDate);
         let searchResultBySelectedDate = []
           if(isNaN(selectedEnd) || (searchResultByStart==null)){
             console.log("----------Without checking End----------")
@@ -121,12 +83,12 @@ export const store = createStore({
               if((selectedEnd - Date.parse(activityVar2.details.date.end)) >=0){
                 console.log(activityVar2.details.title)
                 searchResultBySelectedDate.push(activityVar2);
-                // console.log(searchResultBySelectedDate.details.title)
               }
             }
 
             return searchResultBySelectedDate;
           }
+
       }).then((searchResultBySelectedDate) =>{
         store.commit('searchByArea', searchResultBySelectedDate)
       })
@@ -134,9 +96,10 @@ export const store = createStore({
 
     searchByArea: (state, targetArr) => {
       let actDisplayResult = []
-      if((state.selectedArea=='') || (targetArr=='')){
+      if((state.searchConds.selectedArea=='') || (targetArr=='')){
         console.log("----------Without checking area----------")
-        state.actDisplay = targetArr;
+        state.actForSearch = targetArr;
+
         console.log("")
         console.log("")
         return targetArr;
@@ -144,12 +107,13 @@ export const store = createStore({
       }else{
         console.log("----------Result after checking Area:----------")
         for(let activityVar3 of targetArr){
-          if(activityVar3.details.area == state.selectedArea){
+          if(activityVar3.details.area == state.searchConds.selectedArea){
             console.log(activityVar3.details.title)
             actDisplayResult.push(activityVar3);
           }
         }
-        state.actDisplay = actDisplayResult;
+        state.actForSearch = actDisplayResult;
+
           console.log("")
           console.log("")
         return targetArr;
@@ -157,18 +121,16 @@ export const store = createStore({
     },
 
 
-
-    storeStartDate: (state, selectedStartDate)=>{ 
-      state.selectedStartDate = selectedStartDate;
-    },
-  
-    storeEndDate: (state, selectedEndDate)=>{ 
-      state.selectedEndDate = selectedEndDate;
+    storeSearchDate: (state, searchDate)=>{ 
+      state.searchConds.selectedStartDate = searchDate.selectedStart;
+      state.searchConds.selectedEndDate = searchDate.selectedEnd;
     },
   
     storeArea: (state, selectedArea)=>{ 
-      state.selectedArea = selectedArea;
+      state.searchConds.selectedArea = selectedArea;
     },
+
+
   
     storeProfile: (state, payload) => {
       state.profile = payload;
@@ -177,9 +139,10 @@ export const store = createStore({
     },
   
     clearSearchConds: (state) => {
-      state.selectedStartDate = '';
-      state.selectedEndDate = '';
-      state.selectedArea = '';
+      console.log('clear search conditions')
+      state.searchConds.selectedStartDate = '';
+      state.searchConds.selectedEndDate = '';
+      state.searchConds.selectedArea = '';
     },
 
     storetoCart: (state, index)=>{
@@ -212,20 +175,29 @@ export const store = createStore({
     },
 
     
-    createCartArr(state, index) {
+    createCartArr: (state, index) => {
       let value = state.actDisplay[index]
       state.profile.cartArr.push(value)
     },
     
-    updateActDisplay(state){
+    updateActDisplay: (state) => {
       state.actDisplay = state.activities;
     },
 
-    cleanCart(state){
+    cleanCart: (state) => {
       state.profile.cartArr=[];
       state.profile.cartIndexArr=[];
     },
+
+
   },
+
+  // actions:{
+  //   async 
+  //   Search: ({commit, state}) => {
+  //     commit('searchByDate', state.);
+  //   },
+  // },
 
 
 
@@ -259,4 +231,37 @@ export const store = createStore({
 
   // },
 
+    // searchByDate: (state, selectedDate, act, parameter) =>{
+    //   // return new Promise( (resolve)=>{
+    //     let searchResultByDate = [];
+    //     console.log("selected Date: " + selectedDate);
+    //     selectedDate = Date.parse(selectedDate);
 
+    //     if(isNaN(selectedDate)){
+    //       console.log("----------Without checking Start----------")
+    //       return act
+    //     }else{
+    //       console.log("----------Result after checking Start:----------")
+    //       for (let activityVar1 of act){
+    //         if(parameter*(selectedDate - Date.parse(activityVar1.details.date.start))<=0){
+    //           console.log(activityVar1.details.title)
+    //           searchResultByDate.push(activityVar1);
+    //         }
+    //       }
+    
+    //       return (searchResultByDate); 
+    //     }
+    //   // })
+    // },
+
+
+        // search: (state) => {
+    //   (async ()=>{
+    //     // let arr= [];
+    //     // arr = state.activities;
+    //     let searchResultByStart = await store.commit('searchByDate', state.searchConds.selectedStartDate, state.activities, 1);
+    //     let searchResultByEnd = await store.commit('searchByDate', state.searchConds.selectedEndDate, searchResultByStart, -1);
+    //     let searchResultArr = await store.commit('searchByArea', searchResultByEnd);
+    //     return searchResultArr;
+    //   })();
+    // },

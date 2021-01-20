@@ -26,7 +26,7 @@
   import FB_SDK from './assets/FBSdk.js';
   import{useStore} from 'vuex';
   import navBar from './components/navBar';
-  import footer from './components/footer';
+  // import footer from './components/footer';
 
   export default{
     setup(){
@@ -40,17 +40,12 @@
         (async ()=>{
           console.log('re-render app');
           store.commit('getData');
-          // store.commit('checkLoginStatus');
-          // console.log('before check: ' +store.state.profile.loginStatus)
-          // let profile = await FB_SDK.checkLoginStatus();
-          // await store.commit('storeProfile', profile);
-          // console.log(store.state.profile)
         })();
       })
 
       return{
         navBar,
-        footer
+        // footer
       }
 
     },

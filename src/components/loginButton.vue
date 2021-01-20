@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import {computed, reactive, onMounted} from 'vue'
+  import {computed, reactive} from 'vue'
   import '../assets/FBSdk.js';
   import FB_SDK from '../assets/FBSdk.js';
   import{useStore} from 'vuex';
@@ -20,11 +20,9 @@
 
       const loginProps = reactive({
         loginStatus: computed(() => {
-          console.log('btn status computed');
             return store.state.profile.loginStatus
           }),
         loginButtonText: computed(() => {
-          console.log('btn text computed')
           if(store.state.profile.loginStatus==true){
             return 'LOGOUT'
           }else{
@@ -33,40 +31,21 @@
         })
       }) 
 
-      onMounted(()=>{
-        console.log('Login status when btn is Mounted: '+store.state.profile.loginStatus)
-        // if(store.state.profile.loginStatus==true){
-        //   loginProps.loginStatus = true;
-        //   loginProps.loginButtonText = 'LOGOUT';
-        // }else{
-        //   loginProps.loginStatus = false;
-        //   loginProps.loginButtonText = 'LOGIN';
-        // }
-      })
-
       async function fbLogin(){
-        console.log('btn has been triggered')
-        console.log('login stastus when btn is triggered: ' + store.state.profile.loginStatus)
-
         if(store.state.profile.loginStatus==true){
           console.log('start logout');
           let profile = await FB_SDK.FBlogout();
           await store.commit('storeProfile', profile);
-          window.location.reload();
-          // setTimeout(()=>window.location.reload(),500);
-          store.commit('cleanCart');
           store.commit('updateActDisplay')
-          // console.log('btn:' + loginProps.loginStatus)
-          // console.log('store:' + store.state.profile.loginStatus);
+          await store.commit('cleanCart');
+          document.location.reload();
 
         }else{
           console.log('start login');
           let profile = await FB_SDK.FBlogin();
           await store.commit('storeProfile', profile);
-          // window.location.reload();
-          // setTimeout(()=>window.location.reload(),500);
-          // console.log('btn:' + loginProps.loginStatus)
-          // console.log('store:' + store.state.profile.loginStatus);
+          await store.commit('updateActDisplay')
+          document.location.reload();
         }
       }
 

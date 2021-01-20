@@ -22,13 +22,10 @@
       const add = ()=>{
         if (items.isLogin){
           if(!items.isAdded){  
-            // console.log('add index:'+index);
             store.commit('storetoCart',index)
           }else{
-            // console.log('del index:'+ index);
             store.commit('deleteFromCart',index)
           }
-          // console.log('isAdded: '+items.isAdded)
           items.isAdded = !items.isAdded;
         }else{
           window.alert('請先登入');

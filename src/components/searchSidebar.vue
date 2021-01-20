@@ -1,10 +1,9 @@
 <template>
-
       <form class="form-searchbar">
           <div class="area-box form-group mt-3">
             <label for="area" class="text-primary h5"><span class="material-icons mr-1 align-text-bottom">place</span>潛哪?</label>
-            <select class="area-select form-control text-primary" id="area" v-model="searchConds.area">
-              <option value="null" selected disabled>{{searchConds.defaultarea}}</option>
+            <select class="area-select form-control text-primary" id="area" v-model="items.searchConds.area">
+              <option value="null" selected disabled>{{items.defaultarea}}</option>
               <option value="北部" >北部</option>
               <option value="中部" >中部</option>
               <option value="南部" >南部</option>
@@ -18,15 +17,15 @@
 
           <div class="datepicker">
             <label for="startDate" class="text-primary h5"><span class="material-icons mr-1 align-text-bottom">event_note</span>從</label>
-            <datepicker-lite :value-attr="searchConds.defaultStartDate" @value-changed="searchConds.changeStart"/>
+            <datepicker-lite :value-attr="items.defaultStartDate" @value-changed="items.changeStart"/>
           </div>
             
           <div class="datepicker">
             <label for="endDate" class="text-primary h5"><span class="material-icons mr-1 align-text-bottom">event_note</span>到</label>
-            <datepicker-lite :value-attr="searchConds.defaultEndDate" @value-changed="searchConds.changeEnd"/>
+            <datepicker-lite :value-attr="items.defaultEndDate" @value-changed="items.changeEnd"/>
           </div>
       </form>
-      <button class="btn-search btn btn-primary mb-3" @click="Search">
+      <button class="btn-search btn btn-primary mb-3" @click="search">
         <span class="material-icons">search</span>
       </button>
 
@@ -43,38 +42,38 @@
       const store = useStore();
       const router = useRouter();
 
-      const searchConds = reactive({
-        defaultStartDate: computed(() => store.state.selectedStartDate),
-        defaultEndDate: computed(() => store.state.selectedEndDate),
-        defaultarea: computed(() => store.state.selectedArea),
-
-        area: '',
-        selectedStart: '',
-        selectedEnd: '',
+      const items = reactive({
+        defaultStartDate: computed(() => store.state.searchConds.selectedStartDate),
+        defaultEndDate: computed(() => store.state.searchConds.selectedEndDate),
+        defaultarea: computed(() => store.state.searchConds.selectedArea),
+        
+        searchConds:{
+          area: '',
+          selectedStart: '',
+          selectedEnd: '',
+        },
 
         changeStart: (Start) => {
-          searchConds.selectedStart = Start;
+          items.searchConds.selectedStart = Start;
         },
 
         changeEnd: (End) => {
-          searchConds.selectedEnd = End;
+          items.searchConds.selectedEnd = End;
         }
 
       })
 
-      const Search = async()=>{
-        await store.commit('storeStartDate', searchConds.selectedStart)
-        store.commit('storeEndDate', searchConds.selectedEnd);
-        await store.commit('storeArea', searchConds.area); 
-        store.commit('Search')
+      const search = async()=>{
+        await store.commit('storeSearchDate', items.searchConds)
+        await store.commit('storeArea', items.searchConds.area); 
+        store.commit('search')
         router.push({ path: '/result' });
       }
 
       return{
-        searchConds,
-        Search,
+        items,
+        search,
       }
-
     },
     
     components:{

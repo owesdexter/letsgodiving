@@ -53,55 +53,35 @@ function profileChange(res, resolve){
   }
 }
 
-// function checkLoginStatus(){
-//   return new Promise( (resolve)=>{
-//     setTimeout(()=>{
-//       window.FB.getLoginStatus(function(res) {
-//           profileChange(res, resolve)
-//           console.log('check: '+res.status)
-//       });
-//     },500)
-//   });
-// }
 
 function FBlogin(){
   return new Promise( (resolve)=>{
     window.FB.login(function(res){
-      profileChange(res, resolve)
+      profileChange(res, resolve);
+      
     });
   });
 }
+
 
 function FBlogout(){
   return new Promise( (resolve)=>{
     window.FB.getLoginStatus(function(res) {
       if(res.status=='connected'){
         window.FB.logout(function(res){
-          console.log("FB start logout");
           profileChange(res, resolve);
-          document.location.reload();
+          
         });
       }
     });
   })
 }
 
-function test(){
-  var nullProps = null			// null string
-  console.log((nullProps==null))
-  console.log((nullProps==''))
-  console.log( !nullProps)
-    console.log(typeof(nullProps))
-    console.log(!typeof(nullProps)) 
-    console.log(isNaN(nullProps))
-}
 
 var fbSDKMethods = {
   initFbSdk,
-  // checkLoginStatus,
   FBlogin,
   FBlogout,
-  test
 };
 
 export default fbSDKMethods;
