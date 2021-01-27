@@ -15,7 +15,7 @@
       <div class="col-12 col-md-8">
         <form class="form-host" @submit.prevent="onSubmit">
           <div class="form-group row">
-            <label for="title" class="col col-md-3 col-lg-2 col-form-label"><span class="text-danger">*</span>活動標題:</label>
+            <label for="title" class="col col-md-3 col-lg-2 col-form-label"><span class="text-danger">*</span>標題:</label>
             <div class="col-8 col-md">
               <input name="title" id="title" class="form-control" type="text" placeholder="為活動想個吸引人的標題吧" maxlength="11" v-model="items.activity.details.title" required>
             </div>

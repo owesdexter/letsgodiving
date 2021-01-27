@@ -9,12 +9,25 @@
         </div>
       </div>
     </header>
+    <section class="caresoul">
+      <div class="container container-md container-lg container-xl">
+        <div class="row d-flex flex-column align-items-center ">
+          <div class="col-12 col-md-10 ">
+            <div class="w-100 d-flex flex-column align-items-center ">
+              <h2 class="mb-4">想潛哪裡呢?</h2>
+              <carousel/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 </template>
 
 <script>
   import {onMounted} from 'vue'
   import {useStore} from 'vuex'
   import searchBar from '../components/searchBar'
+  import carousel from '../components/carousel'
   export default{
     setup(){
 
@@ -28,13 +41,18 @@
     },
 
     components:{
-      searchBar
+      searchBar,
+      carousel,
     }
   }
 
 </script>
 
 <style>
+.banner{
+  margin-bottom: 60px;
+}
+
 .title{
   font-size: 4rem;
   font-family: 'Caveat', cursive;

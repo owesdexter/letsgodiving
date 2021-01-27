@@ -1,6 +1,6 @@
 <template>
   <div class="result container container-md container-lg container-xl mt-3 mt-md-5 mb-3 mb-md-5">
-    <h2>共 {{items.actArraysLength}} 潛:</h2>
+    <h2>共 <span class="font-weight-bold">{{items.actArraysLength}}</span> 潛:</h2>
     <div class="row">
       <div class="col-12 col-md-8">
         <activities/>

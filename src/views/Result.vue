@@ -17,7 +17,6 @@
 
   export default {
     setup(){
-
       return{
         searchSideBar,
       }

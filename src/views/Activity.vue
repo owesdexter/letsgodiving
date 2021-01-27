@@ -1,5 +1,5 @@
 <template>
-  <h2>找到 {{arr.actArraysLength}} 項活動:</h2>
+  <h2>找到 <span class="font-weight-bold">{{arr.actArraysLength}} </span> 項活動:</h2>
   <div class="act-box shadow bg-white rounded mb-2 mb-md-4" 
     :key="activity.index" v-for="(activity) in arr.sourceActArr" >
 
@@ -12,8 +12,8 @@
         <p>{{activity.host.name}}</p>
       </div>
 
-      <ul class="act-details" >
-        <h3 class="text-primary text-left mb-3">{{activity.details.title}}</h3>
+      <ul class="act-details ml-3 ml-md-4" >
+        <h4 class="text-primary text-left font-weight-bold mb-3">{{activity.details.title}}</h4>
         <li class="text-dark text-left mb-3"><span class="material-icons align-text-bottom d-inline-block mr-2">event_note</span>{{activity.details.date.start}} ~ {{activity.details.date.end}}</li>
         <li class="text-dark text-left mb-3"><span class="material-icons align-text-bottom d-inline-block mr-2">map</span>{{activity.details.area}}</li>
         <li class="text-dark text-left mb-3"><span class="material-icons align-text-bottom d-inline-block mr-2">perm_identity</span>{{activity.details.num}}</li>

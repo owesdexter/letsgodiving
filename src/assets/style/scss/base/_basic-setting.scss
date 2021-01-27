@@ -1,0 +1,29 @@
+/*--------------------------------------------------------------------*/
+/*                               General                              */
+/*--------------------------------------------------------------------*/
+section{
+    margin-bottom: 60px;
+    @include pad{
+        margin-bottom: 40px;
+    }
+    @include iphone{
+        margin-bottom: 20px;
+    }
+}
+
+ol, ul, li{
+    padding: 0;
+	list-style: none;
+}
+
+.w-100{
+    width: 100%;
+}
+
+.object-fit-cover{
+    object-fit: cover;
+}
+
+.object-position-center{        
+    object-position: center;
+}

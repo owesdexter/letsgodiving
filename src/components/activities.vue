@@ -11,14 +11,14 @@
             <p>{{activity.host.name}}</p>
           </div>
 
-          <ul class="act-details" >
-            <h3 class="text-primary text-left mb-3">{{activity.details.title}}</h3>
+          <ul class="act-details ml-3 ml-md-4" >
+            <h4 class="text-primary text-left font-weight-bold mb-3">{{activity.details.title}}</h4>
             <li class="text-dark text-left mb-3"><span class="material-icons align-text-bottom d-inline-block mr-2">event_note</span>{{activity.details.date.start}} ~ {{activity.details.date.end}}</li>
             <li class="text-dark text-left mb-3"><span class="material-icons align-text-bottom d-inline-block mr-2">map</span>{{activity.details.area}}</li>
             <li class="text-dark text-left mb-3"><span class="material-icons align-text-bottom d-inline-block mr-2">perm_identity</span>{{activity.details.num}}</li>
           </ul>
         </div>
-        <h2 class="font-weight-bold">NT$ {{activity.details.fee}}</h2>
+        <h4 class="font-weight-bold text-right">NT$ {{activity.details.fee}}</h4>
       </router-link>
       
     </div>

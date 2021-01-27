@@ -4,6 +4,7 @@ import axios from 'axios'
 import createPersistedState from 'vuex-persistedstate'
 
 export const store = createStore({
+/*----------------------------state----------------------------*/
   state: {
     activities: [],
     actDisplay: [],
@@ -24,6 +25,7 @@ export const store = createStore({
     }
   },
 
+/*----------------------------mutation----------------------------*/
   mutations: {
     getData: state => {
         axios.get('https://dss-v-profolio.firebaseio.com/activity.json')
@@ -96,6 +98,7 @@ export const store = createStore({
 
     searchByArea: (state, targetArr) => {
       let actDisplayResult = []
+      console.log("selected area: " + state.searchConds.selectedArea)
       if((state.searchConds.selectedArea=='') || (targetArr=='')){
         console.log("----------Without checking area----------")
         state.actForSearch = targetArr;
@@ -127,7 +130,10 @@ export const store = createStore({
     },
   
     storeArea: (state, selectedArea)=>{ 
-      state.searchConds.selectedArea = selectedArea;
+      return new Promise(()=>{
+        console.log('storeArea: ' + selectedArea)
+        state.searchConds.selectedArea = selectedArea;
+      })
     },
 
 
@@ -192,15 +198,6 @@ export const store = createStore({
 
   },
 
-  // actions:{
-  //   async 
-  //   Search: ({commit, state}) => {
-  //     commit('searchByDate', state.);
-  //   },
-  // },
-
-
-
 
 
   plugins: [
@@ -211,57 +208,3 @@ export const store = createStore({
 });
 
 
-
-
-    
-  
-
-
-  // actions: {
-  //   getData: ({commit}) => {
-  //     commit('getData');
-  //   },
-  //   searchByStartDate: ({commit},payload) => {
-  //     commit('searchByStartDate',payload);
-  //   },
-
-  //   clearProfile: ({commit}) =>{
-  //     commit('clearProfile');
-  //   }
-
-  // },
-
-    // searchByDate: (state, selectedDate, act, parameter) =>{
-    //   // return new Promise( (resolve)=>{
-    //     let searchResultByDate = [];
-    //     console.log("selected Date: " + selectedDate);
-    //     selectedDate = Date.parse(selectedDate);
-
-    //     if(isNaN(selectedDate)){
-    //       console.log("----------Without checking Start----------")
-    //       return act
-    //     }else{
-    //       console.log("----------Result after checking Start:----------")
-    //       for (let activityVar1 of act){
-    //         if(parameter*(selectedDate - Date.parse(activityVar1.details.date.start))<=0){
-    //           console.log(activityVar1.details.title)
-    //           searchResultByDate.push(activityVar1);
-    //         }
-    //       }
-    
-    //       return (searchResultByDate); 
-    //     }
-    //   // })
-    // },
-
-
-        // search: (state) => {
-    //   (async ()=>{
-    //     // let arr= [];
-    //     // arr = state.activities;
-    //     let searchResultByStart = await store.commit('searchByDate', state.searchConds.selectedStartDate, state.activities, 1);
-    //     let searchResultByEnd = await store.commit('searchByDate', state.searchConds.selectedEndDate, searchResultByStart, -1);
-    //     let searchResultArr = await store.commit('searchByArea', searchResultByEnd);
-    //     return searchResultArr;
-    //   })();
-    // },
