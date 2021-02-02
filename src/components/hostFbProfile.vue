@@ -2,7 +2,7 @@
   <div class="align-items-center p-2">
     <img :src="`${profile.userPicURL}`" class="host-img d-block mb-2" v-if="profile.loginStatus">
     <img src="@/assets/imgs/unloggined.png" class="host-img unloggined-img d-block mb-2" v-if="!profile.loginStatus">
-    <h5 class="text-center text-sm">{{profile.name}}</h5>
+    <h5 class="profile-name text-center text-md-s text-lg-m">{{profile.name}}</h5>
   </div>
 </template>
 

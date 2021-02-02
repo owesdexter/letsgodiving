@@ -192,13 +192,16 @@
 
 </script>
 
-<style>
+<style lang="scss">
   .host-page .disabled{
     background-color: gray;
   }
 
-  .host-page .unloggined-img{
-    object-position: center 0%;
+  .host-page .profile-name{
+    font-size: 1rem;
+    @media (max-width: 576px){
+      font-size: 0.5rem !important;
+    }
   }
 
   .host-page .datepicker input{

@@ -101,7 +101,7 @@
   line-height: 2.25;
   border: 0px;
   border-radius: 5px;
-  width: 150px;
+  width: 237.8 px;
 }
 
 .area-select{
@@ -120,15 +120,16 @@ label{
 
 @media (max-width: 768px){
   .datepicker input{
-    width: 150px;
+    width: 100%;
+    margin-bottom: 1rem;
   };
 }
 
-@media (max-width: 576px){
+/* @media (max-width: 576px){
   .datepicker input{
     width: 237.8px;
   };
-}
+} */
 
 </style>
  
