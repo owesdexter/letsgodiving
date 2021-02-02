@@ -3,7 +3,8 @@
     <div class="d-flex justify-content-between">      
       <p class="text-dark text-left text-lg-m text-h5 mb-3"><span class="material-icons align-text-bottom h5-md text-h4 d-inline-block mr-2">event_note</span>{{items.activity.details.date.start}} ~ {{items.activity.details.date.end}}</p>
       <like-btn/>
-    </div>  
+    </div>
+      
     <div class="d-flex flex-column flex-md-row justify-content-between">
       <ul class="latter-fifth-details pl-0">
         <li class="text-dark text-left text-lg-m text-h5 mb-3"><span class="material-icons align-text-bottom h5-md text-h4 d-inline-block mr-2">map</span>{{items.activity.details.area}}</li>
