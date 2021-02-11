@@ -1,70 +1,103 @@
 import { createStore } from 'vuex'
-// import {useStore} from 'vuex';
-import axios from 'axios'
-import createPersistedState from 'vuex-persistedstate'
+import {apigetUser, apiUserRegister, apigetAct} from '../assets/axiosAPI.js';
+import createPersistedState from 'vuex-persistedstate';
 
 export const store = createStore({
 /*----------------------------state----------------------------*/
   state: {
-    activities: [],
-    actDisplay: [],
-    actForSearch: [],
+    DBActObj: {},
+    DBActsArr: [],
+    userActObj: {},
+    searchActArr: [],
     profile: {
-      loginStatus: false,
       id:  '',
       name: '請先登入',
-      userPicURL: '',
+      userPicURL: require('@/assets/imgs/unloggined.png'),
+      loginTime: false,
+      logoutTime: false,
+      cartIndexArr: {},
       link: '',
-      cartIndexArr: [],
-      cartArr: [],
+      phone:'',
+      email:'',
     },
     searchConds:{
       selectedStartDate: '',
       selectedEndDate: '',
       selectedArea: '', 
+    },
+    bonus:{
+      LetsGoDiving50:{
+        desc: '- NT$ 50',
+        discount: '-50',
+      },
+      letsgodiving888:{
+        desc: '-20%',
+        discount: '*0.8',
+      },
+      AwesomeDexter:{
+        desc: '-50%',
+        discount: '*0.5',
+      },
+      HandsomeDexter:{
+        desc: '-100%',
+        discount: '*0',
+      },
+      DexterIsUgly:{
+        desc: '+100%',
+        discount: '*2',
+      },
     }
   },
 
 /*----------------------------mutation----------------------------*/
   mutations: {
     getData: state => {
-        axios.get('https://dss-v-profolio.firebaseio.com/activity.json')
-            .then(res => {
-                console.log("getData from DB")
-                const resultArray = [];
-                for (let key in res.data) {
-                  resultArray.unshift(res.data[key]);
-                }
-                state.activities = resultArray;
-              
-            }).then(()=>{
-                for (let key in state.activities){
-                  state.activities[key].index = key;
-                }
-                state.actForSearch = state.activities;
+      apigetAct()
+        .then(res => {
+            console.log("getData from DB")
+            const resultArray = [];
+            let DBKeys = Object.keys(res.data);
+            let n = DBKeys.length;
+            state.DBActObj = JSON.parse(JSON.stringify(res.data));
 
-                if(state.profile.loginStatus==false){
-                  state.actDisplay = state.activities;
-                }
-            });
+            for (let key in state.DBActObj) {
+              resultArray.unshift(state.DBActObj[key]);
+              DBKeys.push(key);
+            }
+            state.DBActsArr = [...resultArray];
+
+            for (let i=0; i<n; i++){
+              state.DBActsArr[i].actID = DBKeys[n-1-i];
+            }
+            
+
+            if(state.profile.loginTime==''){
+              state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
+            }
+
+          })
+          .then(()=>{   
+            state.searchActArr = [...state.DBActsArr];
+            // console.log(state.DBActsArr)
+            // console.log(state.userActObj)
+            // console.log(state.searchActArr)
+        });
     },
 
-
-
-    search: (state) =>{
+    search: state =>{
       return new Promise( (resolve)=>{
         let searchResultByStart = [];
-        console.log("selected start: " + state.searchConds.selectedStartDate)
-        console.log("selected end: " + state.searchConds.selectedEndDate);
-        console.log("selected area: " + state.searchConds.selectedArea)
+        // console.log("selected start: " + state.searchConds.selectedStartDate)
+        // console.log("selected end: " + state.searchConds.selectedEndDate);
+        // console.log("selected area: " + state.searchConds.selectedArea)
         let selectedStart = Date.parse(state.searchConds.selectedStartDate);
 
         if(isNaN(selectedStart)){
           console.log("----------Without checking Start----------")
-          resolve(state.activities)
+          resolve(state.DBActsArr)
         }else{
           console.log("----------Result after checking Start:----------")
-          for (let activityVar1 of state.activities){
+          for (let activityVar1 of state.DBActsArr){
             if((selectedStart - Date.parse(activityVar1.details.date.start))<=0){
               console.log(activityVar1.details.title)
               searchResultByStart.push(activityVar1);
@@ -75,7 +108,7 @@ export const store = createStore({
 
       }).then((searchResultByStart)=>{
         let selectedEnd = Date.parse(state.searchConds.selectedEndDate);
-        let searchResultBySelectedDate = []
+        let searchResultBySelectedDate = [];
           if(isNaN(selectedEnd) || (searchResultByStart==null)){
             console.log("----------Without checking End----------")
             return searchResultByStart;
@@ -97,11 +130,11 @@ export const store = createStore({
     },
 
     searchByArea: (state, targetArr) => {
-      let actDisplayResult = []
+      let userActObjResult = []
       console.log("selected area: " + state.searchConds.selectedArea)
       if((state.searchConds.selectedArea=='') || (targetArr=='')){
         console.log("----------Without checking area----------")
-        state.actForSearch = targetArr;
+        state.searchActArr = targetArr;
 
         console.log("")
         console.log("")
@@ -112,17 +145,16 @@ export const store = createStore({
         for(let activityVar3 of targetArr){
           if(activityVar3.details.area == state.searchConds.selectedArea){
             console.log(activityVar3.details.title)
-            actDisplayResult.push(activityVar3);
+            userActObjResult.push(activityVar3);
           }
         }
-        state.actForSearch = actDisplayResult;
+        state.searchActArr = userActObjResult;
 
           console.log("")
           console.log("")
         return targetArr;
       }
     },
-
 
     storeSearchDate: (state, searchDate)=>{ 
       state.searchConds.selectedStartDate = searchDate.selectedStart;
@@ -135,14 +167,6 @@ export const store = createStore({
         state.searchConds.selectedArea = selectedArea;
       })
     },
-
-
-  
-    storeProfile: (state, payload) => {
-      state.profile = payload;
-      console.log('storeProfile');
-      console.log('');
-    },
   
     clearSearchConds: (state) => {
       console.log('clear search conditions')
@@ -151,53 +175,162 @@ export const store = createStore({
       state.searchConds.selectedArea = '';
     },
 
-    storetoCart: (state, index)=>{
-      state.actDisplay[index].isAdded = true;
-      state.profile.cartIndexArr.push(index);
-
-      let value = state.actDisplay[index];
-      state.profile.cartArr.push(value);
+    storetoCart: (state, actID)=>{
+      state.userActObj[actID].isAdded = true;
+      state.profile.cartIndexArr[actID] = {};
+      state.profile.cartIndexArr[actID].attendNum = 1;
+      state.profile.cartIndexArr[actID].registerFee = state.userActObj[actID].details.fee;
+      // state.profile.cartIndexArr.push(actID);
+      // state.profile.cartIndexArr[actID].fee = state.userActObj[actID].details.fee;
     },
 
-    deleteFromCart: (state, index)=>{
-      let i = state.profile.cartIndexArr.indexOf(index)
-      let lengthOfArr = state.profile.cartIndexArr.length
-      console.log('lengthofIndex: '+lengthOfArr)
-      console.log('delete index: '+index)
-      console.log('cartArrIndex: ' + state.profile.cartIndexArr)
+    deleteFromCart: (state, actID)=>{
+      state.userActObj[actID].isAdded = false;
 
-      state.actDisplay[index].isAdded = false;
+      // let i = state.profile.cartIndexArr.indexOf(actID)
+      // let lengthOfArr = state.profile.cartIndexArr.length
 
-      if(i == (lengthOfArr-1)){
-        state.profile.cartIndexArr.pop();
-        state.profile.cartArr.pop();
+      delete state.profile.cartIndexArr[actID];
+
+      // if(i == (lengthOfArr-1)){
+      //   state.profile.cartIndexArr.pop();
+      // }else{
+      //   state.profile.cartIndexArr.copyWithin(i,i+1);
+      //   state.profile.cartIndexArr.pop();
+      // }
+    },
+
+    addAttendee: (state, actID) =>{
+      state.profile.cartIndexArr[actID].attendNum++;
+      state.profile.cartIndexArr[actID].registerFee = state.userActObj[actID].details.fee * state.profile.cartIndexArr[actID].attendNum;
+    },
+
+    minusAttendee: (state, actID) =>{
+      state.profile.cartIndexArr[actID].attendNum--;
+      state.profile.cartIndexArr[actID].registerFee = state.userActObj[actID].details.fee * state.profile.cartIndexArr[actID].attendNum;
+    },
+
+    updateCart: (state) => {
+      if(state.profile.cartIndexArr){
+        for(let userActKey in state.profile.cartIndexArr){
+          console.log(state.userActObj)
+          state.userActObj[userActKey].isAdded = true;
+        }
       }else{
-        state.profile.cartIndexArr.copyWithin(i,i+1);
-        state.profile.cartIndexArr.pop();
-
-        state.profile.cartArr.copyWithin(i,i+1);
-        state.profile.cartArr.pop();
+        state.profile.cartIndexArr = [];
       }
     },
 
-    
-    createCartArr: (state, index) => {
-      let value = state.actDisplay[index]
-      state.profile.cartArr.push(value)
+    storeProfile: (state, profile) => {
+      state.profile = Object.assign({}, profile);
+      console.log('storeProfile');
+    },
+
+    uploadUser: state => {
+      apiUserRegister(state.profile.id, state.profile);
     },
     
-    updateActDisplay: (state) => {
-      state.actDisplay = state.activities;
+    resetUserActObj: (state) => {
+      state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
+      console.log('reset actForUser')
     },
 
     cleanCart: (state) => {
-      state.profile.cartArr=[];
       state.profile.cartIndexArr=[];
     },
 
+    storeLogoutTime: (state, payload) => {
+      state.profile.logoutTime = payload;
+    }
 
   },
 
+/*----------------------------action----------------------------*/
+
+  actions: {
+    userLogin: ({dispatch})=>{
+      console.log('start login process');
+      return dispatch('getUserData')
+      .then(()=>{
+        dispatch('resetUserActObj')
+      }).then(()=>{
+        dispatch('updateCart')
+      }).then(()=>{
+        document.location.reload();
+      })
+    },
+
+    userLogout: ({dispatch})=>{
+      console.log('start logout process');
+      return dispatch('uploadUser').then(()=>{
+        dispatch('resetuserActObj')
+      })
+    },
+
+    uploadUser: ({commit}, profile)=>{
+      return new Promise(()=>{
+        commit('uploadUser', profile);
+      })
+    },
+
+    getUserData: ({state})=>{
+      console.log('start download user data')
+      return new Promise((resolve)=>{
+        apigetUser(state.profile.id).then( res =>{
+
+          let finalLoginStatus = {};
+          
+          Object.keys(res.data).forEach( key =>{
+            finalLoginStatus = res.data[key];
+          })
+
+          // console.log(finalLoginStatus)
+          // console.log(finalLoginStatus.cartIndexArr)
+          // console.log(!finalLoginStatus.cartIndexArr)
+
+          if(!finalLoginStatus.cartIndexArr){
+            // console.log('here')
+            state.profile.cartIndexArr = {};
+          }else{
+            state.profile.cartIndexArr = JSON.parse(JSON.stringify(finalLoginStatus.cartIndexArr));
+          }
+
+          // console.log(state.profile)
+          resolve();
+
+        }).catch((res)=>{
+          console.log(res)
+          resolve()
+        })
+
+      })
+    },
+
+    storeProfile: ({commit}, payload)=>{
+      return new Promise(()=>{
+        commit('storeProfile', payload);
+      })
+    },
+
+    resetUserActObj: ({commit}, payload)=>{
+      return new Promise(()=>{
+        commit('resetuserActObj', payload);
+      })
+    },
+
+    updateCart: ({commit}, payload)=>{
+      return new Promise(()=>{
+        commit('updateCart', payload);
+      })
+    },
+
+    storeLogoutTime: ({commit}, payload)=>{
+      return new Promise( ()=>{
+        commit('storeLogoutTime', payload)
+      })
+    },
+
+  },
 
 
   plugins: [
@@ -205,6 +338,7 @@ export const store = createStore({
       storage: window.sessionStorage,
     })
   ],    
+
 });
 
 

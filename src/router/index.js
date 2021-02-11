@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import ActivityDetails from '../views/ActivityDetails.vue'
-import Activity from '../views/Activity.vue'
+import Activities from '../views/Activities.vue'
 import Host from '../views/Host.vue'
 import Result from '../views/Result.vue'
 import Cart from '../views/Cart.vue'
@@ -20,10 +20,10 @@ const routes = [
     {
       path: '',
       name: 'Result',
-      component: Activity,
+      component: Activities,
     },
     {
-      path: '/activitydetails/:index',
+      path: '/activitydetails/:actID',
       name: 'Detail',
       component: ActivityDetails,
     }]

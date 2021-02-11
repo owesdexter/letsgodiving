@@ -20,10 +20,10 @@
 
       const loginProps = reactive({
         loginStatus: computed(() => {
-            return store.state.profile.loginStatus
-          }),
+            return isNaN(store.state.profile.loginTime);
+        }),
         loginButtonText: computed(() => {
-          if(store.state.profile.loginStatus==true){
+          if(isNaN(store.state.profile.loginTime)){
             return 'LOGOUT'
           }else{
             return 'LOGIN'
@@ -32,20 +32,19 @@
       }) 
 
       async function fbLogin(){
-        if(store.state.profile.loginStatus==true){
-          console.log('start logout');
-          let profile = await FB_SDK.FBlogout();
-          await store.commit('storeProfile', profile);
-          store.commit('updateActDisplay')
-          await store.commit('cleanCart');
-          document.location.reload();
 
-        }else{
-          console.log('start login');
-          let profile = await FB_SDK.FBlogin();
-          await store.commit('storeProfile', profile);
-          await store.commit('updateActDisplay')
+        if(isNaN(store.state.profile.loginTime)){
+          let logoutTime = new Date;
+          store.state.profile.logoutTime = logoutTime.toString();
+          store.dispatch('userLogout', store.state.profile);
+          let profile = await FB_SDK.FBlogout();
+          store.commit('storeProfile', profile);
           document.location.reload();
+          
+        }else{
+          let profile = await FB_SDK.FBlogin();
+          store.dispatch('storeProfile', profile);
+          store.dispatch('userLogin');
         }
       }
 

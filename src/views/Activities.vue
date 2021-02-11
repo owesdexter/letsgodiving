@@ -4,13 +4,10 @@
     :key="activity.index" v-for="(activity) in arr.sourceActArr" >
 
     <router-link 
-        :to="'/activitydetails/' + `${activity.index}`" 
+        :to="'/activitydetails/' + `${activity.actID}`" 
         class="details-btn btn btn-light d-flex p-2 p-md-3">
 
-      <div class="host-photo text-center">
-        <img :src="`${activity.host.userPicURL}`" class="host-img">
-        <p>{{activity.host.name}}</p>
-      </div>
+      <fb-profile :sourceProfile="activity.host"/>
 
       <ul class="act-details ml-3 ml-md-4" >
         <h4 class="text-primary text-left font-weight-bold mb-3">{{activity.details.title}}</h4>
@@ -28,19 +25,22 @@
 <script>
   import {computed, reactive,} from 'vue'
   import {useStore} from 'vuex';
-
+  import fbProfile from "../components/fbProfile"
 
   export default {
     setup(){
       const store = useStore();
       const arr = reactive({
-        sourceActArr: computed(() => store.state.actForSearch),
-        actArraysLength: computed(() => store.state.actForSearch.length),
+        sourceActArr: computed(() => store.state.searchActArr),
+        actArraysLength: computed(() => store.state.searchActArr.length),
       })
 
       return{
         arr,
       }
     },
+    components:{
+      fbProfile,
+    }
   }
 </script>

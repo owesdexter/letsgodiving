@@ -2,14 +2,11 @@
   <div class="host-page container container-md container-lg container-xl mt-2 mt-md-4 mb-3 mb-md-5">
     <h2 class="mb-2 mb-md-3 h3-md">個人檔案</h2>
     <div class="row">
-      <div class="host-profile-box col-12 col-md-8 d-flex p-2 p-md-3 mb-3 mb-md-4">
-        
-        <div class="fb-profile d-flex flex-column align-items-center">
-          <host-fb-profile/>
+      <div class="col-12 col-md-8 mb-4 mb-md-5">
+        <div class="host-profile-box d-flex p-2 p-md-3">
+          <fb-profile/>
+          <contact-info/>
         </div>
-        
-        <contact-info/>
-
       </div>
       <h2 class="col-12 col-md-8 h3-md mb-2 mb-md-3">活動資訊</h2>
       <div class="col-12 col-md-8">
@@ -17,7 +14,7 @@
           <div class="form-group row">
             <label for="title" class="col col-md-3 col-lg-2 col-form-label"><span class="text-danger">*</span>標題:</label>
             <div class="col-8 col-md">
-              <input name="title" id="title" class="form-control" type="text" placeholder="為活動想個吸引人的標題吧" maxlength="11" v-model="items.activity.details.title" required>
+              <input name="title" id="title" class="form-control" type="text" placeholder="為活動想個吸引人的標題吧" maxlength="11" v-model.trim="items.activity.details.title" required>
             </div>
           </div>
 
@@ -40,28 +37,28 @@
           <div class="form-group row">
             <label for="location" class="col col-md-3 col-lg-2 col-form-label"><span class="text-white">*</span>潛點: </label>
             <div class="col-8 col-md">
-              <input name="location" id="location" class="form-control" type="text" maxlength="20" v-model="items.activity.details.location">
+              <input name="location" id="location" class="form-control" type="text" maxlength="20" v-model.trim="items.activity.details.location">
             </div>
           </div>
 
           <div class="datepicker form-group row">
             <label for="startDate" class="col col-md-3 col-lg-2 col-form-label"><span class="text-danger">*</span>出發日:</label>
             <div class="col-8 col-md">
-              <datepicker-lite @value-changed="items.activity.changeStart"/>
+              <datepicker-lite @value-changed="changeStart"/>
             </div>
           </div>
 
           <div class="datepicker form-group row">
             <label for="endDate" class="col col-md-3 col-lg-2 col-form-label"><span class="text-danger">*</span>回程日:</label>
             <div class="col-8 col-md">
-              <datepicker-lite @value-changed="items.activity.changeEnd"/>
+              <datepicker-lite @value-changed="changeEnd"/>
             </div>
           </div>
         
           <div class="form-group row">
             <label for="num" class="col col-md-3 col-lg-2 col-form-label"><span class="text-white">*</span>人數:</label>
             <div class="col-8 col-md">
-              <input id="num" class="form-control" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="2" v-model="items.activity.details.num">
+              <input id="num" class="form-control" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="2" v-model.number="items.activity.details.num">
             </div>
           </div>
 
@@ -87,7 +84,6 @@
           </div>
 
         </form>
-        
       </div>
     </div>
   </div>
@@ -98,10 +94,10 @@
   import{reactive, provide, computed} from 'vue';
   import{useStore} from 'vuex';
   import{useRouter} from 'vue-router';
-  import axios from 'axios';
-  import contactInfo from '../components/contactInfo'
+  import {apipostAct} from '../assets/axiosAPI.js';
+  import contactInfo from '../components/contactInfo';
   import DatepickerLite from "vue3-datepicker-lite";
-  import hostFbProfile from "../components/hostFbProfile"
+  import fbProfile from "../components/fbProfile"
 
   export default{ 
     setup(){
@@ -110,10 +106,15 @@
 
       const items = reactive({
         activity: {
+          actID:'',
+          isAdded: false,
+          bulitTime: '',
           host:{
             name: computed(() =>store.state.profile.name),
             userPicURL: computed(() =>store.state.profile.userPicURL),
             link: computed(() =>store.state.profile.link),
+            phone: computed(() =>store.state.profile.phone),
+            email: computed(() =>store.state.profile.email),
           },
           details: {
             title:'',
@@ -123,24 +124,15 @@
               start: '',
               end:'',
             },
-            num:'',
-            fee:'',
+            num: '',
+            fee: '',
             description: '',
-          },
-          isAdded: false,
-          eventID:'',
-          index:'',
-
-          changeStart: (Start) => {
-            items.activity.details.date.start = Start;
-          },
-          changeEnd: (End) => {
-            items.activity.details.date.end = End;
+            attendee: '',
           },
         },
-        isLogin: store.state.profile.loginStatus,
+        isLogin: isNaN(store.state.profile.loginTime),
         isSubmitErr: false,
-        index: 0,
+
       });
 
       const submitDetail = ()=>{
@@ -160,9 +152,11 @@
               act.details.date.start = items.activity.details.date.end;
               act.details.date.end = replacement;
             }
-            act.eventID = now.getTime();
-            axios.post('https://dss-v-profolio.firebaseio.com/activity.json', act);
-            store.commit('updateActDisplay')
+            act.num = parseInt(items.activity.details.num)
+            act.fee = parseInt(items.activity.details.fee)
+            act.bulitTime = now.getTime();
+            apipostAct(act)
+            store.dispatch('resetuserActObj')
           }
           
           // Redirect to Home
@@ -172,20 +166,30 @@
         }else{
           window.alert('請先登入!');
         }
-      }
+      };
 
-      provide('index', items.index);
-      provide('resourceActivity', store.state.activities)
+          const changeStart = (Start) => {
+            items.activity.details.date.start = Start;
+          };
+          const changeEnd = (End) => {
+            items.activity.details.date.end = End;
+          };
 
+
+      provide('profile', store.state.profile);
 
       return{
         items,
         submitDetail,
         DatepickerLite,
-        contactInfo,
-        hostFbProfile
+        changeStart,
+        changeEnd,
       }
 
+    },
+    components:{
+      contactInfo,
+      fbProfile,
     }
   }
 
@@ -195,13 +199,6 @@
 <style lang="scss">
   .host-page .disabled{
     background-color: gray;
-  }
-
-  .host-page .profile-name{
-    font-size: 1rem;
-    @media (max-width: 576px){
-      font-size: 0.5rem !important;
-    }
   }
 
   .host-page .datepicker input{
@@ -219,6 +216,13 @@
   .host-profile-box{
     border-radius: 20px;
     background-color:rgb(35,212,240,0.1);
+  }
+
+  .host-page .profile-name{
+    font-size: 1rem;
+    @media (max-width: 576px){
+      font-size: 0.5rem !important;
+    }
   }
 
 </style>

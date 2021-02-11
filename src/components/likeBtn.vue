@@ -11,26 +11,26 @@
   export default {
     setup(){
       const store = useStore();
-      const index = inject('index')
+      const actID = inject('actID')
+      // const sourceActObj = inject('sourceActObj');
       
       const items = reactive({
-        activity: store.state.actDisplay[index],
-        isAdded: store.state.actDisplay[index].isAdded,
-        isLogin: store.state.profile.loginStatus,
+        activity: store.state.userActObj[actID],
+        isAdded: store.state.userActObj[actID].isAdded,
+        isLogin: isNaN(store.state.profile.loginTime),
       })
 
       const add = ()=>{
         if (items.isLogin){
           if(!items.isAdded){  
-            store.commit('storetoCart',index)
+            store.commit('storetoCart', actID)
           }else{
-            store.commit('deleteFromCart',index)
+            store.commit('deleteFromCart', actID)
           }
           items.isAdded = !items.isAdded;
         }else{
           window.alert('請先登入');
         } 
-        
       }
 
       return{

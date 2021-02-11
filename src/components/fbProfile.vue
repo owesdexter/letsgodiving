@@ -1,22 +1,20 @@
 <template>
   <div class="align-items-center p-2">
-    <img :src="`${profile.userPicURL}`" class="host-img d-block mb-2" v-if="profile.loginStatus">
-    <img src="@/assets/imgs/unloggined.png" class="host-img unloggined-img d-block mb-2" v-if="!profile.loginStatus">
+    <img :src="`${profile.userPicURL}`" class="host-img d-block mb-2">
     <h5 class="profile-name text-center text-md-s text-lg-m">{{profile.name}}</h5>
   </div>
 </template>
 
 <script>
-  import {computed} from 'vue';
-  import {useStore} from 'vuex';
-
+  import {inject} from 'vue';
   export default{
-    setup(){
-      const store = useStore();
-      const profile = computed(()=>{
-        return store.state.profile;
-      })
-
+    props:{
+      sourceProfile: {
+        type: Object,
+      }
+    }, 
+    setup(props){
+      const profile = inject('profile', props.sourceProfile);
       return{
         profile,
       }

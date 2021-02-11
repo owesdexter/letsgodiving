@@ -78,7 +78,6 @@
     
     components:{
       DatepickerLite,
-
     }
   }
 

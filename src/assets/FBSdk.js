@@ -26,29 +26,30 @@ function profileChange(res, resolve){
   console.log('profilechange')
   if (res.status === 'connected') {
     window.FB.api("/me", "GET", { fields: 'id, name, picture, link' }, function (response) {
-        if (response.error) {
-          console.log(response);
-        } else {
-          userProfile.loginStatus = true;
+      if (response.error) {
+        console.log(response);
+      } else {
+          let now = new Date;
           userProfile.id =  response.id;
           userProfile.name = response.name;
           userProfile.userPicURL = response.picture.data.url;
           userProfile.link = 'https://www.facebook.com/juzhong.chen';
-          userProfile.cartIndexArr = [];
-          userProfile.cartArr = [];
-          console.log('Loggined');
+          userProfile.loginTime = now.toString();
+          userProfile.logoutTime = false;
+          userProfile.cartIndexArr = {};
+          console.log('FBlogin')
           resolve(userProfile);
         }
     });
   }else{
-    userProfile.loginStatus = false;
     userProfile.id =  '';
     userProfile.name = '請先登入';
-    userProfile.userPicURL = '';
+    userProfile.userPicURL = require('@/assets/imgs/unloggined.png');
     userProfile.link = '';
-    userProfile.cartIndexArr = [];
-    userProfile.cartArr = [];
-    console.log('Unloggined');
+    userProfile.loginTime = false;
+    userProfile.logoutTime = false;
+    userProfile.cartIndexArr = {};
+    console.log('FBlogout');
     resolve(userProfile);
   }
 }
@@ -58,7 +59,6 @@ function FBlogin(){
   return new Promise( (resolve)=>{
     window.FB.login(function(res){
       profileChange(res, resolve);
-      
     });
   });
 }
@@ -70,12 +70,13 @@ function FBlogout(){
       if(res.status=='connected'){
         window.FB.logout(function(res){
           profileChange(res, resolve);
-          
         });
       }
     });
   })
 }
+
+
 
 
 var fbSDKMethods = {

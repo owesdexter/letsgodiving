@@ -41,7 +41,7 @@
           console.log('re-render app');
           store.commit('getData');
         })();
-      })
+      });
 
       return{
         navBar,
