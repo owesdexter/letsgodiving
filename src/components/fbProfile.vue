@@ -1,6 +1,6 @@
 <template>
-  <div class="align-items-center p-2">
-    <img :src="`${profile.userPicURL}`" class="host-img d-block mb-2">
+  <div class="d-flex flex-column align-items-center p-2">
+    <img :src="`${profile.userPicURL}`" class="host-img d-block mb-2 text-center">
     <h5 class="profile-name text-center text-md-s text-lg-m">{{profile.name}}</h5>
   </div>
 </template>
@@ -24,18 +24,21 @@
 
 <style lang="scss" scoped>
   .host-img{
-      object-fit: cover;
-      width: 75px;
-      
+    object-fit: cover;
+    width: 75px;
     border-radius: 50%;
+
     @media (max-width: 576px){
       width: 50px;
       height: 50px;
     }
   };
 
-  .unloggined-img{
-    object-position: center 10%;
+  .profile-name{
+    font-size: 1rem;
+    @media (max-width: 576px){
+      font-size: 0.5rem !important;
+    }
   }
 
 </style>

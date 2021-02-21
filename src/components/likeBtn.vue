@@ -1,7 +1,7 @@
 <template>
     <button class="btn-marker bg-transparent border-0" :class="{disabled: !items.isLogin}" @click="add">
-      <i class="far fa-bookmark align-middle text-h3" v-if="!items.activity.isAdded"></i>
-      <i class="fas fa-bookmark align-middle text-h3" v-if="items.activity.isAdded" :class="{'text-primary': items.activity.isAdded}" ></i>
+      <i class="far fa-bookmark align-middle text-h3" v-if="!items.isAdded"></i>
+      <i class="fas fa-bookmark align-middle text-h3" v-if="items.isAdded" :class="{'text-primary': items.isAdded}" ></i>
     </button>
 </template>
 
@@ -9,28 +9,29 @@
   import {reactive, inject} from 'vue';
   import {useStore} from 'vuex';
   export default {
+
     setup(){
       const store = useStore();
       const actID = inject('actID')
-      // const sourceActObj = inject('sourceActObj');
       
       const items = reactive({
         activity: store.state.userActObj[actID],
         isAdded: store.state.userActObj[actID].isAdded,
-        isLogin: isNaN(store.state.profile.loginTime),
+        isLogin: true,
+        // isLogin: isNaN(store.state.profile.loginTime),
       })
 
       const add = ()=>{
-        if (items.isLogin){
+        // if (items.isLogin){
           if(!items.isAdded){  
             store.commit('storetoCart', actID)
           }else{
             store.commit('deleteFromCart', actID)
           }
           items.isAdded = !items.isAdded;
-        }else{
-          window.alert('請先登入');
-        } 
+        // }else{
+        //   window.alert('請先登入');
+        // } 
       }
 
       return{

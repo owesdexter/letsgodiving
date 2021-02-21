@@ -1,8 +1,6 @@
 <template>
-    <div class="buyer-info shadow rounded mb-3 mb-md-4 p-2 p-lg-1 p-xl-2">
-        <fb-profile  class="d-flex flex-column align-items-center"/>
-        <contact-info />
-    </div>
+    <fb-profile/>
+    <contact-info />
 </template>
 
 <script>
@@ -23,10 +21,5 @@
 </script>
 
 <style>
-    .buyer-info{
-        background-color:rgb(35,212,240,0.1);
-    }
-    .buyer-info .contact-info ul{
-        margin: 0 !important;
-    }
+    
 </style>

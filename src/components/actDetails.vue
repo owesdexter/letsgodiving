@@ -2,7 +2,7 @@
   <div class="act-details-box p-2 p-md-3">
     <div class="d-flex justify-content-between">      
       <p class="text-dark text-left text-lg-m text-h5 mb-3"><span class="material-icons align-text-bottom h5-md text-h4 d-inline-block mr-2">event_note</span>{{items.activity.details.date.start}} ~ {{items.activity.details.date.end}}</p>
-      <like-btn/>
+      <like-btn />
     </div>
       
     <div class="d-flex flex-column flex-md-row justify-content-between">
@@ -24,25 +24,27 @@
 
 <script>
   import {reactive, inject} from 'vue';
-  import {useStore} from 'vuex';
+  // import {useStore} from 'vuex';
   import likeBtn from './likeBtn'
   export default {
     setup(){
-      const store = useStore();
+      // const store = useStore;
+
       const isDetails = inject('isDetails', false);
       const sourceActObj = inject('sourceActObj');
       // const actID = inject('actID')
-      
+
+      // const isAdded = ref(store.state.userActObj[actID].isAdded)
+
       const items = reactive({
         activity: sourceActObj,
         isDetails: false,
-        isLogin: isNaN(store.state.profile.loginTime),
       })
 
       return{
         items,
         isDetails,
-
+        // isAdded,
       }
     },
 

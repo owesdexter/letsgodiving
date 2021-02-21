@@ -36,7 +36,8 @@
         if(isNaN(store.state.profile.loginTime)){
           let logoutTime = new Date;
           store.state.profile.logoutTime = logoutTime.toString();
-          store.dispatch('userLogout', store.state.profile);
+          store.dispatch('userLogout');
+
           let profile = await FB_SDK.FBlogout();
           store.commit('storeProfile', profile);
           document.location.reload();

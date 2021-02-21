@@ -2,7 +2,7 @@
     <div class="searchbar-container d-flex flex-column flex-md-row justify-content-between align-items-md-center">
       <form class="form-searchbar d-flex flex-column flex-md-row justify-content-between">
           <div class="area-box form-group">
-            <label for="area" class="text-primary h5"><span class="material-icons mr-1 align-text-bottom">place</span>潛哪?</label>
+            <label for="area" class="text-white h5"><span class="material-icons mr-1 align-text-bottom">place</span>潛哪?</label>
             <select class="area-select form-control text-primary" id="area" v-model="items.searchConds.area">
               <option value="null" selected disabled hidden>{{items.defaultarea}}</option>
               <option value="北部" selected>北部</option>
@@ -17,12 +17,12 @@
           </div>
 
           <div class="datepicker ml-0 ml-md-3">
-            <label for="startDate" class="text-primary h5"><span class="material-icons mr-1 align-text-bottom">event_note</span>從</label>
+            <label for="startDate" class="text-white h5"><span class="material-icons mr-1 align-text-bottom">event_note</span>從</label>
             <datepicker-lite :value-attr="items.defaultStartDate" @value-changed="items.changeStart"/>
           </div>
             
           <div class="datepicker ml-0 ml-md-3">
-            <label for="endDate" class="text-primary h5"><span class="material-icons mr-1 align-text-bottom">event_note</span>到</label>
+            <label for="endDate" class="text-white h5"><span class="material-icons mr-1 align-text-bottom">event_note</span>到</label>
             <datepicker-lite :value-attr="items.defaultEndDate" @value-changed="items.changeEnd"/>
           </div>
       </form>
@@ -86,7 +86,7 @@
 </script>
 
 
-<style>
+<style lang="scss">
 .searchbar-container{
   width: 100%;
   background-color: rgb(108, 168, 228,0.4);
@@ -94,14 +94,15 @@
   border-radius: 10px;
 }
 
-
+.datepicker input .area-select{
+  background-color: #dee2e6;
+}
 .datepicker input{
-  background-color: white;
   text-align: center;
   line-height: 2.25;
   border: 0px;
   border-radius: 5px;
-  width: 237.8 px;
+  width: 237.8px;
 }
 
 .area-select{

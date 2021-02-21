@@ -14,12 +14,10 @@
 <script>
   import searchSideBar from '../components/searchSidebar'
 
-
   export default {
-    setup(){
-      return{
-        searchSideBar,
-      }
+
+    components:{
+      searchSideBar,
     }
   }
 </script>

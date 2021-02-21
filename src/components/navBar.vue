@@ -6,7 +6,7 @@
                 <ul class="main-nav d-flex justify-content-between align-items-center">
                     <li class="align-middle"><router-link to="/host" class="text-light">揪潛伴</router-link></li>
                     <li class="ml-3 ml-md-4 align-middle"><router-link to="/cart" class="text-light">我的行程</router-link></li>
-                    <li class="ml-3 ml-md-4 align-middle"><login-Button></login-Button></li>
+                    <li class="ml-3 ml-md-4 align-middle"><login-button/></li>
                 </ul>
             </div>
         </div>
@@ -14,19 +14,13 @@
 </template>
 
 <script>
-import loginButton from '../components/loginButton'
+import loginButton from './loginButton'
     export default{
-        setup(){
-            return{
-                loginButton,
-            }
+        components:{
+            loginButton,
         }
     }
-
 </script>
 
-<style>
-
-</style>
 
 

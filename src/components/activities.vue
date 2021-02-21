@@ -31,27 +31,17 @@
 </template>
 
 <script>
-  import {inject} from 'vue'
-  // import {useStore} from 'vuex';
+
   import actFee from './actFee';
-  import fbProfile from "../components/fbProfile"
+  import fbProfile from "./fbProfile"
 
   export default {
-    setup(){
-      // const store = useStore();
-      const sourceActArr = inject('sourceActArr');
-
-      // const items = reactive({
-      //   attendNum: computed((actID)=>{
-      //     store.state.profile.cartIndexArr[actID];
-      //   })
-      // })
-
-      return{
-        sourceActArr,
-        // items,
+    props:{
+      sourceActArr:{
+        type: Array,
       }
     },
+
     components:{
       actFee,
       fbProfile,

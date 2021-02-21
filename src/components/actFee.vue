@@ -31,18 +31,17 @@
       const store = useStore();
 
       const items = reactive({
-        attendNum: computed(()=> parseInt(store.state.profile.cartIndexArr[props.actID].attendNum)),
-        // totalActFee: computed(()=> parseInt((store.state.profile.cartIndexArr[props.actID]))*(props.actFee)),   
-        totalActFee: computed(()=> parseInt(store.state.profile.cartIndexArr[props.actID].registerFee)),
+        attendNum: computed(()=> parseInt(store.state.profile.cartKeyObj[props.actID].attendNum)),
+        totalActFee: computed(()=> parseInt(store.state.profile.cartKeyObj[props.actID].registerFee)),
         isUpToMax: computed(()=>{
           let max = store.state.userActObj[props.actID].details.num;
-          let currentNum = store.state.profile.cartIndexArr[props.actID].attendNum;
-          if(currentNum >= max){
-            return true
+          if(store.state.profile.cartKeyObj[props.actID]!==undefined){
+            if(store.state.profile.cartKeyObj[props.actID].attendNum >= max){
+              return true
+            }
           }
         })
       });
-
 
       const add = () =>{
         if(!items.isUpToMax){
@@ -52,7 +51,7 @@
 
       const minus = () =>{
         store.commit('minusAttendee', props.actID);
-        let currentNum = store.state.profile.cartIndexArr[props.actID].attendNum;
+        let currentNum = store.state.profile.cartKeyObj[props.actID].attendNum;
         if(currentNum < 1){
           store.commit('deleteFromCart', props.actID)
         }

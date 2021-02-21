@@ -23,4 +23,4 @@ export const apigetAct = () => activityConfig.get('.json');
 export const apipostAct = act => activityConfig.post('.json', act);
 export const apipatchAct = (actID, key, data) => activityConfig.patch(`${actID}/`+`${key}`, data);
 
-
+//FB Graph API

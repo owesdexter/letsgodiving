@@ -10,13 +10,14 @@ export const store = createStore({
     userActObj: {},
     searchActArr: [],
     profile: {
-      id:  '',
-      name: '請先登入',
+      id: '',
+      name: '未登入',
       userPicURL: require('@/assets/imgs/unloggined.png'),
       loginTime: false,
       logoutTime: false,
-      cartIndexArr: {},
+      cartKeyObj: {},
       link: '',
+      license: '',
       phone:'',
       email:'',
     },
@@ -25,78 +26,87 @@ export const store = createStore({
       selectedEndDate: '',
       selectedArea: '', 
     },
-    bonus:{
-      LetsGoDiving50:{
+    bonus:[
+      {
+        id: 0,
+        title: 'letsGoDiving50',
         desc: '- NT$ 50',
-        discount: '-50',
+        discount: 50,
       },
-      letsgodiving888:{
+      {
+        id: 1,
+        title: 'letsgodiving888',
         desc: '-20%',
-        discount: '*0.8',
+        discount: 0.8,
       },
-      AwesomeDexter:{
+      { 
+        id: 2,
+        title: 'awesomeDexter',
         desc: '-50%',
-        discount: '*0.5',
+        discount: 0.5,
       },
-      HandsomeDexter:{
+      { 
+        id: 3,
+        title: 'handsomeDexter',
         desc: '-100%',
-        discount: '*0',
+        discount: 0,
       },
-      DexterIsUgly:{
+      { 
+        id: 4,
+        title: 'dexterIsUgly',
         desc: '+100%',
-        discount: '*2',
+        discount: 2,
       },
-    }
+    ],
   },
 
 /*----------------------------mutation----------------------------*/
   mutations: {
     getData: state => {
       apigetAct()
-        .then(res => {
+        .then(res => { 
             console.log("getData from DB")
             const resultArray = [];
             let DBKeys = Object.keys(res.data);
             let n = DBKeys.length;
+            let DBActsArrKeys = []
             state.DBActObj = JSON.parse(JSON.stringify(res.data));
+            // state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
+            
+            for (let key of DBKeys){
+              state.DBActObj[key].actID = key;
+            }
+            state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
 
             for (let key in state.DBActObj) {
               resultArray.unshift(state.DBActObj[key]);
-              DBKeys.push(key);
+              DBActsArrKeys.unshift(key);
             }
             state.DBActsArr = [...resultArray];
-
             for (let i=0; i<n; i++){
-              state.DBActsArr[i].actID = DBKeys[n-1-i];
+              state.DBActsArr[i].actID = DBActsArrKeys[i];
             }
+
+            state.searchActArr = [...state.DBActsArr];
+
+            
             
 
-            if(state.profile.loginTime==''){
-              state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
-            }
-
           })
-          .then(()=>{   
-            state.searchActArr = [...state.DBActsArr];
-            // console.log(state.DBActsArr)
-            // console.log(state.userActObj)
-            // console.log(state.searchActArr)
-        });
+        //   .then(()=>{   
+        // });
     },
 
     search: state =>{
       return new Promise( (resolve)=>{
         let searchResultByStart = [];
-        // console.log("selected start: " + state.searchConds.selectedStartDate)
-        // console.log("selected end: " + state.searchConds.selectedEndDate);
-        // console.log("selected area: " + state.searchConds.selectedArea)
         let selectedStart = Date.parse(state.searchConds.selectedStartDate);
 
         if(isNaN(selectedStart)){
-          console.log("----------Without checking Start----------")
+          // console.log("----------Without checking Start----------")
           resolve(state.DBActsArr)
         }else{
-          console.log("----------Result after checking Start:----------")
+          // console.log("----------Result after checking Start:----------")
           for (let activityVar1 of state.DBActsArr){
             if((selectedStart - Date.parse(activityVar1.details.date.start))<=0){
               console.log(activityVar1.details.title)
@@ -110,10 +120,10 @@ export const store = createStore({
         let selectedEnd = Date.parse(state.searchConds.selectedEndDate);
         let searchResultBySelectedDate = [];
           if(isNaN(selectedEnd) || (searchResultByStart==null)){
-            console.log("----------Without checking End----------")
+            // console.log("----------Without checking End----------")
             return searchResultByStart;
           }else{
-            console.log("----------Result after checking End:---------")
+            // console.log("----------Result after checking End:---------")
             for (let activityVar2 of searchResultByStart){
               if((selectedEnd - Date.parse(activityVar2.details.date.end)) >=0){
                 console.log(activityVar2.details.title)
@@ -133,15 +143,12 @@ export const store = createStore({
       let userActObjResult = []
       console.log("selected area: " + state.searchConds.selectedArea)
       if((state.searchConds.selectedArea=='') || (targetArr=='')){
-        console.log("----------Without checking area----------")
+        // console.log("----------Without checking area----------")
         state.searchActArr = targetArr;
-
-        console.log("")
-        console.log("")
         return targetArr;
 
       }else{
-        console.log("----------Result after checking Area:----------")
+        // console.log("----------Result after checking Area:----------")
         for(let activityVar3 of targetArr){
           if(activityVar3.details.area == state.searchConds.selectedArea){
             console.log(activityVar3.details.title)
@@ -149,9 +156,6 @@ export const store = createStore({
           }
         }
         state.searchActArr = userActObjResult;
-
-          console.log("")
-          console.log("")
         return targetArr;
       }
     },
@@ -163,7 +167,7 @@ export const store = createStore({
   
     storeArea: (state, selectedArea)=>{ 
       return new Promise(()=>{
-        console.log('storeArea: ' + selectedArea)
+        // console.log('storeArea: ' + selectedArea)
         state.searchConds.selectedArea = selectedArea;
       })
     },
@@ -177,48 +181,35 @@ export const store = createStore({
 
     storetoCart: (state, actID)=>{
       state.userActObj[actID].isAdded = true;
-      state.profile.cartIndexArr[actID] = {};
-      state.profile.cartIndexArr[actID].attendNum = 1;
-      state.profile.cartIndexArr[actID].registerFee = state.userActObj[actID].details.fee;
-      // state.profile.cartIndexArr.push(actID);
-      // state.profile.cartIndexArr[actID].fee = state.userActObj[actID].details.fee;
+      state.profile.cartKeyObj[actID] = {};
+      state.profile.cartKeyObj[actID].attendNum = 1;
+      state.profile.cartKeyObj[actID].registerFee = state.userActObj[actID].details.fee;
     },
 
     deleteFromCart: (state, actID)=>{
       state.userActObj[actID].isAdded = false;
-
-      // let i = state.profile.cartIndexArr.indexOf(actID)
-      // let lengthOfArr = state.profile.cartIndexArr.length
-
-      delete state.profile.cartIndexArr[actID];
-
-      // if(i == (lengthOfArr-1)){
-      //   state.profile.cartIndexArr.pop();
-      // }else{
-      //   state.profile.cartIndexArr.copyWithin(i,i+1);
-      //   state.profile.cartIndexArr.pop();
-      // }
+      delete state.profile.cartKeyObj[actID];
     },
 
     addAttendee: (state, actID) =>{
-      state.profile.cartIndexArr[actID].attendNum++;
-      state.profile.cartIndexArr[actID].registerFee = state.userActObj[actID].details.fee * state.profile.cartIndexArr[actID].attendNum;
+      state.profile.cartKeyObj[actID].attendNum++;
+      state.profile.cartKeyObj[actID].registerFee = state.userActObj[actID].details.fee * state.profile.cartKeyObj[actID].attendNum;
     },
 
     minusAttendee: (state, actID) =>{
-      state.profile.cartIndexArr[actID].attendNum--;
-      state.profile.cartIndexArr[actID].registerFee = state.userActObj[actID].details.fee * state.profile.cartIndexArr[actID].attendNum;
+      state.profile.cartKeyObj[actID].attendNum--;
+      state.profile.cartKeyObj[actID].registerFee = state.userActObj[actID].details.fee * state.profile.cartKeyObj[actID].attendNum;
     },
 
     updateCart: (state) => {
-      if(state.profile.cartIndexArr){
-        for(let userActKey in state.profile.cartIndexArr){
-          console.log(state.userActObj)
+      if(state.profile.cartKeyObj){
+        for(let userActKey in state.profile.cartKeyObj){
           state.userActObj[userActKey].isAdded = true;
         }
       }else{
-        state.profile.cartIndexArr = [];
+        state.profile.cartKeyObj = {};
       }
+      console.log('cart is updated')
     },
 
     storeProfile: (state, profile) => {
@@ -228,15 +219,19 @@ export const store = createStore({
 
     uploadUser: state => {
       apiUserRegister(state.profile.id, state.profile);
+      console.log('user uploaded')
     },
     
     resetUserActObj: (state) => {
       state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
-      console.log('reset actForUser')
+      for (let key in state.userActObj){
+        state.userActObj[key].actID = key;
+      }
+      console.log('resetUserActObj')
     },
 
     cleanCart: (state) => {
-      state.profile.cartIndexArr=[];
+      state.profile.cartKeyObj=[];
     },
 
     storeLogoutTime: (state, payload) => {
@@ -248,28 +243,32 @@ export const store = createStore({
 /*----------------------------action----------------------------*/
 
   actions: {
-    userLogin: ({dispatch})=>{
+    userLogin: ({dispatch, state})=>{
       console.log('start login process');
       return dispatch('getUserData')
       .then(()=>{
         dispatch('resetUserActObj')
+        console.log(state.profile.cartKeyObj);
       }).then(()=>{
         dispatch('updateCart')
       }).then(()=>{
-        document.location.reload();
+        // document.location.reload();
+      }).catch((err)=>{
+        console.log(err)
       })
     },
 
     userLogout: ({dispatch})=>{
       console.log('start logout process');
       return dispatch('uploadUser').then(()=>{
-        dispatch('resetuserActObj')
+        dispatch('resetUserActObj');
       })
     },
 
     uploadUser: ({commit}, profile)=>{
-      return new Promise(()=>{
+      return new Promise(resolve=>{
         commit('uploadUser', profile);
+        resolve();
       })
     },
 
@@ -277,33 +276,31 @@ export const store = createStore({
       console.log('start download user data')
       return new Promise((resolve)=>{
         apigetUser(state.profile.id).then( res =>{
-
           let finalLoginStatus = {};
-          
           Object.keys(res.data).forEach( key =>{
             finalLoginStatus = res.data[key];
           })
-
-          // console.log(finalLoginStatus)
-          // console.log(finalLoginStatus.cartIndexArr)
-          // console.log(!finalLoginStatus.cartIndexArr)
-
-          if(!finalLoginStatus.cartIndexArr){
-            // console.log('here')
-            state.profile.cartIndexArr = {};
+          if(!finalLoginStatus.cartKeyObj){
+            state.profile.cartKeyObj = {};
           }else{
-            state.profile.cartIndexArr = JSON.parse(JSON.stringify(finalLoginStatus.cartIndexArr));
+            state.profile.cartKeyObj = JSON.parse(JSON.stringify(finalLoginStatus.cartKeyObj));
           }
-
-          // console.log(state.profile)
           resolve();
-
-        }).catch((res)=>{
-          console.log(res)
+        }).catch((err)=>{
+          console.log(err)
           resolve()
         })
-
       })
+    },
+
+    reloadUserActObj: async ({dispatch})=>{
+      await dispatch('getData')
+      await dispatch('resetUserActObj')
+    },
+
+    resetAllData: async({dispatch})=>{
+      await dispatch('getData')
+      await dispatch('updateCart')
     },
 
     storeProfile: ({commit}, payload)=>{
@@ -313,8 +310,9 @@ export const store = createStore({
     },
 
     resetUserActObj: ({commit}, payload)=>{
-      return new Promise(()=>{
-        commit('resetuserActObj', payload);
+      return new Promise(resolve=>{
+        commit('resetUserActObj', payload);
+        resolve();
       })
     },
 
@@ -325,8 +323,15 @@ export const store = createStore({
     },
 
     storeLogoutTime: ({commit}, payload)=>{
-      return new Promise( ()=>{
+      return new Promise( resolve =>{
         commit('storeLogoutTime', payload)
+        resolve();
+      })
+    },
+
+    getData: ({commit})=>{
+      return new Promise( ()=>{
+        commit('getData');
       })
     },
 

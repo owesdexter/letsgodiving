@@ -13,7 +13,7 @@ function initFbSdk (){
           appId      : '248738799749062',
           cookie     : true,
           xfbml      : true,
-          version    : 'v9.0'
+          version    : 'v9.0',
       });
       window.FB.AppEvents.logPageView();   
       resolve('resolve done');
@@ -65,18 +65,17 @@ function FBlogin(){
 
 
 function FBlogout(){
-  return new Promise( (resolve)=>{
-    window.FB.getLoginStatus(function(res) {
-      if(res.status=='connected'){
+  return new Promise( resolve =>{
+    // window.FB.getLoginStatus(function(res) {
+      // console.log(res.data)
+      // if(res.status=='connected'){
         window.FB.logout(function(res){
           profileChange(res, resolve);
         });
-      }
-    });
+      // }
+    // });
   })
 }
-
-
 
 
 var fbSDKMethods = {

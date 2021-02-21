@@ -1,57 +1,60 @@
 <template>
     <form>
-        <div class="form-group">
-            <label for="bonus">折扣碼</label>
+        <div class="form-group mb-0">
             <input type="text" name="bonus" id="bonus" class="form-control w-100" maxlength="14"
-                :value="items.keywords" @input="keying($event.target.value)">
-                <!-- v-model="keying()"> -->
-                <!-- @input="showOptions" :value="selectedValue" > -->
+                :value="items.keywords" @input="keying($event.target.value)" @blur="blurEvent">
         </div>
+        <ul class="options-container pl-0 position-relative border border-secondary" v-if="items.isKeying"> 
+            <li :key="index" v-for="(option, index) in items.searchResult" 
+                class="options d-flex justify-content-between"
+                @click="selectOption(option.id)">
+                <span>{{option.title}}</span>
+                <span>{{option.desc}}</span>
+            </li>
+        </ul>
     </form>
-    <ul class="pl-0" v-if="items.isKeying"> 
-        <li :key="optionTitle" v-for="(option, optionTitle) in items.searchResult" 
-            class="d-flex justify-content-between"
-            @click="selectOption(optionTitle)">
-
-            <span>{{optionTitle}}</span>
-            <!-- <span>{{option}}</span> -->
-            <span>{{items.searchResult[optionTitle].desc}}</span>
-        </li>
-    </ul>
+    <p class="text-danger" v-if="items.isBonusAdded"><slot></slot></p>
 </template>
 
 <script>
-// import {computed, reactive, inject, onBeforeUpdate} from 'vue';
+
 import {computed, reactive, inject} from 'vue';
 import {useStore} from 'vuex';
 
 export default {
-    setup(context){
+    props:{
+        bonusIndexArr:{
+            type: Array,
+        }
+    },
+    emits:['getOption'],
+    setup(props, context){
         const store = useStore();
         const optionSource = inject('optionSource', store.state.bonus);
-        // let resultObj = {};
+
 
         const items = reactive({
             keywords:'',
             isKeying: '',
+            isBonusAdded: '',
             searchResult: computed(()=>{
-            // return JSON.parse(JSON.stringify(resultObj)); 
-                items.isKeying = true;
-                let resultObj = {};
-                for(let optionName in optionSource){
-                    if(optionName.startsWith(items.keywords)){
-                        resultObj[optionName] = optionSource[optionName].desc;
+                let resultArr = [];
+                for(let option of optionSource){
+                    if(option.title.startsWith(items.keywords)){
+                        resultArr.push(option)
                     }
                 }
-                if(Object.keys(resultObj)==0){
-                    resultObj.查無優惠券 = '';
-                    return resultObj;
+                let n = resultArr.length;
+                if(n==0){
+                    resultArr.push({id: 101, title: '查無結果', desc: ''});
+                    return resultArr;
                 }
-                return JSON.parse(JSON.stringify(resultObj));
+                return resultArr.slice(0, n)
             })                
         });
 
         const keying = value=>{
+            items.isBonusAdded = false;
             if(value==''){
                 items.isKeying = false;
                 items.keywords = '';
@@ -61,38 +64,38 @@ export default {
             }
         }
 
-        // onBeforeUpdate(()=>{
-        //     items.isKeying = true;
-        //     let resultObj = {};
-        //     for(let optionName in optionSource){
-        //         if(optionName.startsWith(items.keywords)){
-        //             resultObj[optionName] = optionSource[optionName].desc;
-        //         }
-        //     }
-        //     if(Object.keys(resultObj)==0){
-        //         resultObj.查無優惠券 = '';
-        //     }
-        //     items.searchResult = JSON.parse(JSON.stringify(resultObj));
-        //     console.log(resultObj)
-        //     console.log(items.searchResult);
-        // })
+        const selectOption = optionIndex=>{
+            if(props.bonusIndexArr.indexOf(optionIndex)<0){
+                context.emit('getOption', optionIndex)
+                items.keywords = '';
+                items.isKeying = false;
+                items.isBonusAdded = false;
+            }else if(optionIndex>100){
+                console.log('no result')
+            }else{
+                items.isBonusAdded = true;
+            }
+        }
 
-
-        const selectOption = optionTitle=>{
-            items.keywords = optionTitle;
-            context.emit('getOption', optionTitle)
+        const blurEvent = ()=>{
+            items.isBonusAdded = false;
+            setTimeout(()=>{items.isKeying = false}, 500);
         }
 
         return{
             items,
             selectOption,
             keying,
+            blurEvent
         }
     },
-
 }
 </script>
 
 <style>
-
+    .options-container{
+        position: absolute;
+        top: 0;
+        z-index: 1;
+    }
 </style>

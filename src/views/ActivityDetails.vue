@@ -1,5 +1,5 @@
 <template>
-  <h1 class="text-primary mb-3 h2-md">{{items.sourceActObj.details.title}}</h1>
+  <h1 class="text-primary mb-3 h2-md">{{sourceActObj.details.title}}</h1>
   <h2 class="mb-2 mb-md-3 h3-md">主辦人</h2>
   <div class="host-profile-box d-flex p-2 p-md-3 mb-4 mb-md-5">
     <fb-profile/>
@@ -15,35 +15,28 @@
 </template>
 
 <script>
-  import {reactive, provide} from 'vue';
+  import {ref, provide} from 'vue';
   import {useStore} from 'vuex';
   import {useRoute} from 'vue-router';
   import actDetails from '../components/actDetails'
   import contactInfo from '../components/contactInfo';
   import fbProfile from "../components/fbProfile"
   export default {
-    props:{
-      
-    },
+
     setup(){
       const store = useStore();
       const route = useRoute();
       const actID = route.params.actID;
+      const sourceActObj = ref(store.state.userActObj[actID]);
       
-      const items = reactive({
-        sourceActObj: store.state.userActObj[actID],
-        isLogin: isNaN(store.state.profile.loginTime),
-      })
 
       provide('isDetails', true);
       provide('actID', actID);
-      provide('sourceActObj', items.sourceActObj);
-      provide('profile', items.sourceActObj.host);
-
-
+      provide('sourceActObj', sourceActObj.value);
+      provide('profile', sourceActObj.value.host);
 
       return{
-        items,
+        sourceActObj
       }
 
     },

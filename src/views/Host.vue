@@ -4,8 +4,7 @@
     <div class="row">
       <div class="col-12 col-md-8 mb-4 mb-md-5">
         <div class="host-profile-box d-flex p-2 p-md-3">
-          <fb-profile/>
-          <contact-info/>
+          <user-info/>
         </div>
       </div>
       <h2 class="col-12 col-md-8 h3-md mb-2 mb-md-3">活動資訊</h2>
@@ -56,11 +55,13 @@
           </div>
         
           <div class="form-group row">
-            <label for="num" class="col col-md-3 col-lg-2 col-form-label"><span class="text-white">*</span>人數:</label>
+            <label for="num" class="col col-md-3 col-lg-2 col-form-label"><span class="text-danger">*</span>人數:</label>
             <div class="col-8 col-md">
-              <input id="num" class="form-control" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="2" v-model.number="items.activity.details.num">
+              <input id="num" class="form-control" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="2" v-model.number="items.activity.details.num" required>
             </div>
           </div>
+
+          <p class="w-100 text-right text-danger" v-if="items.isNumErr">最小邀請人數為1，最大為99</p>
 
           <div class="form-group row">
             <label for="fee" class="col col-md-3 col-lg-2 col-form-label"><span class="text-white">*</span>車馬費:</label>
@@ -95,9 +96,8 @@
   import{useStore} from 'vuex';
   import{useRouter} from 'vue-router';
   import {apipostAct} from '../assets/axiosAPI.js';
-  import contactInfo from '../components/contactInfo';
   import DatepickerLite from "vue3-datepicker-lite";
-  import fbProfile from "../components/fbProfile"
+  import userInfo from '../components/userInfo';
 
   export default{ 
     setup(){
@@ -113,6 +113,7 @@
             name: computed(() =>store.state.profile.name),
             userPicURL: computed(() =>store.state.profile.userPicURL),
             link: computed(() =>store.state.profile.link),
+            license: computed(() =>store.state.profile.license),
             phone: computed(() =>store.state.profile.phone),
             email: computed(() =>store.state.profile.email),
           },
@@ -130,51 +131,62 @@
             attendee: '',
           },
         },
-        isLogin: isNaN(store.state.profile.loginTime),
+        isLogin: true,
+        // isLogin: isNaN(store.state.profile.loginTime),
         isSubmitErr: false,
+        isNumErr: false,
 
       });
 
       const submitDetail = ()=>{
-        // Error checking
-        if(items.isLogin==true){
-          if(!(isNaN(items.activity.details.title) 
-          & isNaN(items.activity.details.area) 
-          & isNaN(items.activity.details.date.start) 
-          & isNaN(items.activity.details.date.end))){
-            items.isSubmitErr = true;
-          }else{
-            // Submit activity
-            let act = items.activity;
-            let now = new Date()
-            if(act.details.date.start>items.activity.details.date.end){
-              let replacement = items.activity.details.date.start;
-              act.details.date.start = items.activity.details.date.end;
-              act.details.date.end = replacement;
-            }
-            act.num = parseInt(items.activity.details.num)
-            act.fee = parseInt(items.activity.details.fee)
-            act.bulitTime = now.getTime();
-            apipostAct(act)
-            store.dispatch('resetuserActObj')
+        if(!(isNaN(items.activity.details.title) 
+        & isNaN(items.activity.details.area) 
+        & isNaN(items.activity.details.date.start) 
+        & isNaN(items.activity.details.date.end)
+        & (items.activity.details.num>0) )){
+          items.isSubmitErr = true;
+        }else if(items.activity.details.num<1){
+          items.isNumErr == true;
+        }else{
+          // Submit activity
+          let act = items.activity;
+          let now = new Date();
+          if(act.details.date.start>items.activity.details.date.end){
+            let replacement = items.activity.details.date.start;
+            act.details.date.start = items.activity.details.date.end;
+            act.details.date.end = replacement;
           }
           
+          if(!isNaN(store.state.profile.loginTime)){
+            // act.host.userPicURL = 'https://raw.githubusercontent.com/owesdexter/letsgodiving/master/src/assets/imgs/unloggined.png';
+            act.host.name = '未登入'
+            act.host.id = now.getTime();
+          }
+
+          if(!isNaN(act.details.fee)){
+            act.details.fee = 0;
+          }else{
+            act.details.fee = parseInt(items.activity.details.fee)
+          }
+
+          act.num = parseInt(items.activity.details.num)
+          act.bulitTime = now.getTime();
+          store.dispatch('reloadUserActObj')
+          apipostAct(act)
+          console.log('upload activity!')
+
           // Redirect to Home
           router.push({ path: '/' });
-          setTimeout(()=>{ window.location.reload(); },900);
-          
-        }else{
-          window.alert('請先登入!');
+          // setTimeout(()=>{ window.location.reload(); },900);
         }
       };
 
-          const changeStart = (Start) => {
-            items.activity.details.date.start = Start;
-          };
-          const changeEnd = (End) => {
-            items.activity.details.date.end = End;
-          };
-
+      const changeStart = (Start) => {
+        items.activity.details.date.start = Start;
+      };
+      const changeEnd = (End) => {
+        items.activity.details.date.end = End;
+      };
 
       provide('profile', store.state.profile);
 
@@ -188,8 +200,7 @@
 
     },
     components:{
-      contactInfo,
-      fbProfile,
+      userInfo,
     }
   }
 
@@ -211,18 +222,9 @@
   }
 
   /*--------------------------HostProfile--------------------------*/
-
-
   .host-profile-box{
     border-radius: 20px;
     background-color:rgb(35,212,240,0.1);
-  }
-
-  .host-page .profile-name{
-    font-size: 1rem;
-    @media (max-width: 576px){
-      font-size: 0.5rem !important;
-    }
   }
 
 </style>
