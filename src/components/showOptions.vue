@@ -1,17 +1,19 @@
 <template>
     <form>
         <div class="form-group mb-0">
-            <input type="text" name="bonus" id="bonus" class="form-control w-100" maxlength="14"
+            <input type="text" name="bonus" id="bonus" class="form-control w-100 " maxlength="14"
                 :value="items.keywords" @input="keying($event.target.value)" @blur="blurEvent">
         </div>
-        <ul class="options-container pl-0 position-relative border border-secondary" v-if="items.isKeying"> 
-            <li :key="index" v-for="(option, index) in items.searchResult" 
-                class="options d-flex justify-content-between"
-                @click="selectOption(option.id)">
-                <span>{{option.title}}</span>
-                <span>{{option.desc}}</span>
-            </li>
-        </ul>
+        <div class="position-relative">
+            <ul class="options-container pl-0 border border-secondary position-absolute w-100" v-if="items.isKeying"> 
+                <li :key="index" v-for="(option, index) in items.searchResult" 
+                    class="options d-flex justify-content-between"
+                    @click="selectOption(option.id)">
+                    <span>{{option.title}}</span>
+                    <span>{{option.desc}}</span>
+                </li>
+            </ul>
+        </div>
     </form>
     <p class="text-danger" v-if="items.isBonusAdded"><slot></slot></p>
 </template>
@@ -64,14 +66,14 @@ export default {
             }
         }
 
-        const selectOption = optionIndex=>{
-            if(props.bonusIndexArr.indexOf(optionIndex)<0){
+        const selectOption = optionIndex =>{
+            if(optionIndex>100){
+                console.log('no result')
+            }else if(props.bonusIndexArr.indexOf(optionIndex)<0){
                 context.emit('getOption', optionIndex)
                 items.keywords = '';
                 items.isKeying = false;
                 items.isBonusAdded = false;
-            }else if(optionIndex>100){
-                console.log('no result')
             }else{
                 items.isBonusAdded = true;
             }
@@ -92,10 +94,18 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" >
     .options-container{
-        position: absolute;
+        background-color: white;
         top: 0;
         z-index: 1;
+    };
+
+    .options{
+        
+        background-color: #fff;
+        &:hover {
+          background-color: #6CA8E4;
+      }
     }
 </style>

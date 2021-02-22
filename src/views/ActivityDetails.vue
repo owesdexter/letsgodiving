@@ -1,12 +1,12 @@
 <template>
-  <h1 class="text-primary mb-3 h2-md">{{sourceActObj.details.title}}</h1>
-  <h2 class="mb-2 mb-md-3 h3-md">主辦人</h2>
+  <h1 class="text-primary font-weight-bold mb-3 h2-md">{{sourceActObj.details.title}}</h1>
+  <h2 class="mb-2 mb-md-3 h4-md">主辦人</h2>
   <div class="host-profile-box d-flex p-2 p-md-3 mb-4 mb-md-5">
     <fb-profile/>
     <contact-info/>
   </div>
   
-  <h2 class="mb-2 mb-md-3">活動資訊</h2>
+  <h2 class="mb-2 mb-md-3 h4-md">活動資訊</h2>
   <act-details/>
 
   <div class="text-right mt-2">

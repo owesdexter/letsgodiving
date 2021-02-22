@@ -27,3 +27,10 @@ ol, ul, li{
 .object-position-center{        
     object-position: center;
 }
+
+.btn .btn-link{
+    &:active, &:visited{
+        outline: none !important;
+        box-shadow: none;
+    }
+}

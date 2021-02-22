@@ -16,6 +16,7 @@ export const store = createStore({
       loginTime: false,
       logoutTime: false,
       cartKeyObj: {},
+      order:{},
       link: '',
       license: '',
       phone:'',
@@ -141,7 +142,7 @@ export const store = createStore({
 
     searchByArea: (state, targetArr) => {
       let userActObjResult = []
-      console.log("selected area: " + state.searchConds.selectedArea)
+      // console.log("selected area: " + state.searchConds.selectedArea)
       if((state.searchConds.selectedArea=='') || (targetArr=='')){
         // console.log("----------Without checking area----------")
         state.searchActArr = targetArr;
@@ -252,7 +253,7 @@ export const store = createStore({
       }).then(()=>{
         dispatch('updateCart')
       }).then(()=>{
-        // document.location.reload();
+        document.location.reload();
       }).catch((err)=>{
         console.log(err)
       })
@@ -265,12 +266,21 @@ export const store = createStore({
       })
     },
 
+    submitOrder: ({dispatch, commit})=>{
+      console.log('submitOrder');
+      return dispatch('uploadUser')
+      .then(()=>{
+        commit('cleanCart');
+      })
+    },
+
     uploadUser: ({commit}, profile)=>{
       return new Promise(resolve=>{
         commit('uploadUser', profile);
         resolve();
       })
     },
+
 
     getUserData: ({state})=>{
       console.log('start download user data')
@@ -334,6 +344,19 @@ export const store = createStore({
         commit('getData');
       })
     },
+
+    // manualLogin: ({dispatch, state})=>{
+    //   console.log('manualLogin');
+    //   return dispatch('getUserData')
+    //   .then(()=>{
+    //     dispatch('resetUserActObj')
+    //     console.log(state.profile.cartKeyObj);
+    //   }).then(()=>{
+    //     dispatch('updateCart')
+    //   }).catch((err)=>{
+    //     console.log(err);
+    //   })
+    // },
 
   },
 

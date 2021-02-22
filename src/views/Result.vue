@@ -1,7 +1,7 @@
 <template>
   <div class="result container container-md container-lg container-xl mt-3 mt-md-5 mb-5">
     <div class="row d-flex">
-      <div class="searchsidebar col-12 col-md-4">
+      <div class="searchsidebar col-12 col-md-4 mb-4 mb-md-0">
         <search-side-bar/>
       </div>
       <div class="sidebar col-12 col-md-8">

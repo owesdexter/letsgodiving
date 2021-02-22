@@ -1,16 +1,16 @@
 <template>
   <ul class="pl-0">
-      <li class="bonusSearch">
-          <label for="bonus" class="text-m">折扣碼</label>
+      <li class="bonusSearch mb-3">
+          <label for="bonus" class="text-md-m text-h5">折扣碼</label>
           <show-options @getOption="getBonusTitle" :bonusIndexArr="bonusIndexArr">優惠碼已加入</show-options>
       </li>
-      <li class="d-flex justify-content-between align-items-center text-dark">
-          <p>車馬費小計</p>
-          <p>NT$ {{items.subTotal}}</p>
+      <li class="d-flex justify-content-between align-items-center text-dark mb-3">
+          <h5 class="text-md-m mb-0 font-weight-bold">車馬費小計</h5>
+          <h5 class="text-md-m mb-0">NT$ {{items.subTotal}}</h5>
       </li>
-      <li>
-          <p class="mb-1">使用折扣碼:</p>
-          <ul>
+      <li class="mb-3">
+          <h5 class="mb-1 text-md-m font-weight-bold">使用折扣碼:</h5>
+          <ul class="mb-2">
             <li :key="index" v-for="(bonus, index) in selectedBonus"  
             class="d-flex justify-content-between align-items-center text-dark">
               <span>{{bonus.title}}</span>
@@ -22,8 +22,8 @@
           </ul>
       </li>
       <li class="d-flex justify-content-between text-primary align-items-center">
-          <h3 class="font-weight-bold h5-lg h4-md">總金額</h3>
-          <h3 class="font-weight-bold h5-lg h4-md">NT {{items.totalExpense}}</h3>
+          <h3 class="font-weight-bold h4-md h5-lg ">總金額</h3>
+          <h3 class="font-weight-bold h4-md h5-lg ">NT {{items.totalExpense}}</h3>
       </li>
   </ul>
 </template>
@@ -102,10 +102,6 @@
 </script>
 
 <style>
-  .buyer-info{
-    background-color:rgb(35,212,240,0.1);
-  }
-  .buyer-info .contact-info ul{
-    margin: 0 !important;
-  }
+
+
 </style>

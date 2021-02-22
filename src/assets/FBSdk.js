@@ -16,6 +16,7 @@ function initFbSdk (){
           version    : 'v9.0',
       });
       window.FB.AppEvents.logPageView();   
+      console.log('initFbSdk')
       resolve('resolve done');
     };
   })  
@@ -66,22 +67,25 @@ function FBlogin(){
 
 function FBlogout(){
   return new Promise( resolve =>{
-    // window.FB.getLoginStatus(function(res) {
-      // console.log(res.data)
+    window.FB.getLoginStatus(function(res) {
+      console.log(res.data)
       // if(res.status=='connected'){
         window.FB.logout(function(res){
           profileChange(res, resolve);
         });
       // }
-    // });
+    });
   })
 }
 
 
+
 var fbSDKMethods = {
   initFbSdk,
+  profileChange,
   FBlogin,
   FBlogout,
+  // manualLogin,
 };
 
 export default fbSDKMethods;

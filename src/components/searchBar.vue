@@ -68,7 +68,7 @@
         await store.commit('storeSearchDate', items.searchConds)
         await store.commit('storeArea', items.searchConds.area); 
         store.commit('search')
-        router.push({ path: '/result' });
+        router.push({ path: 'result' });
       }
 
       return{
@@ -103,6 +103,15 @@
   border: 0px;
   border-radius: 5px;
   width: 237.8px;
+
+  @media (max-width: 992px){
+    width: 200px;
+  }
+
+  @media (max-width: 768px){
+    width: 100%;
+    margin-bottom: 1rem;
+  }
 }
 
 .area-select{
@@ -119,12 +128,12 @@ label{
   font-size: 1.25rem;
 }
 
-@media (max-width: 768px){
-  .datepicker input{
-    width: 100%;
-    margin-bottom: 1rem;
-  };
-}
+// @media (max-width: 768px){
+//   .datepicker input{
+//     width: 100%;
+//     margin-bottom: 1rem;
+//   };
+// }
 
 /* @media (max-width: 576px){
   .datepicker input{

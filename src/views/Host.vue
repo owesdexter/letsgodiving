@@ -1,13 +1,13 @@
 <template>
   <div class="host-page container container-md container-lg container-xl mt-2 mt-md-4 mb-3 mb-md-5">
-    <h2 class="mb-2 mb-md-3 h3-md">個人檔案</h2>
+    <h2 class="mb-2 mb-md-3 h4-md">個人檔案</h2>
     <div class="row">
       <div class="col-12 col-md-8 mb-4 mb-md-5">
         <div class="host-profile-box d-flex p-2 p-md-3">
           <user-info/>
         </div>
       </div>
-      <h2 class="col-12 col-md-8 h3-md mb-2 mb-md-3">活動資訊</h2>
+      <h2 class="col-12 col-md-8 h4-md mb-2 mb-md-3">活動資訊</h2>
       <div class="col-12 col-md-8">
         <form class="form-host" @submit.prevent="onSubmit">
           <div class="form-group row">
@@ -139,14 +139,15 @@
       });
 
       const submitDetail = ()=>{
-        if(!(isNaN(items.activity.details.title) 
+        if(items.activity.details.num<1){
+          items.isNumErr = true;
+        }else if(!(isNaN(items.activity.details.title) 
         & isNaN(items.activity.details.area) 
         & isNaN(items.activity.details.date.start) 
         & isNaN(items.activity.details.date.end)
         & (items.activity.details.num>0) )){
+          items.isNumErr = false;
           items.isSubmitErr = true;
-        }else if(items.activity.details.num<1){
-          items.isNumErr == true;
         }else{
           // Submit activity
           let act = items.activity;
@@ -176,8 +177,8 @@
           console.log('upload activity!')
 
           // Redirect to Home
-          router.push({ path: '/' });
-          // setTimeout(()=>{ window.location.reload(); },900);
+          router.push({ path: '/result' });
+          setTimeout(()=>{ window.location.reload(); },500);
         }
       };
 
