@@ -45,7 +45,7 @@
           let statement = Date.parse(now) + 248738799749062;
           window.location.href = "https://www.facebook.com/v9.0/dialog/oauth/?"
             +"client_id=248738799749062"
-            +"&redirect_uri=https://localhost:8080/register"
+            +"&redirect_uri=https://sheltered-cove-28264.herokuapp.com/register"
             +"&state=" 
             + statement;
           isLogining.value = true;
