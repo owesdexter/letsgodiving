@@ -17,15 +17,7 @@
 </template>
 
 <script>
-    // import {inject} from 'vue';
-    export default {
-      setup(){
-          // const sourceObj = inject('sourceObj')
-          return{
-            // sourceObj,
-          }
-      },
-    }
+
 </script>
 
 <style scoped>

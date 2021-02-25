@@ -73,7 +73,6 @@ export const store = createStore({
             let n = DBKeys.length;
             let DBActsArrKeys = []
             state.DBActObj = JSON.parse(JSON.stringify(res.data));
-            // state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
             
             for (let key of DBKeys){
               state.DBActObj[key].actID = key;
@@ -93,8 +92,6 @@ export const store = createStore({
 
             console.log("gotData from DB")
           })
-        //   .then(()=>{   
-        // });
     },
 
     search: state =>{
@@ -103,10 +100,8 @@ export const store = createStore({
         let selectedStart = Date.parse(state.searchConds.selectedStartDate);
 
         if(isNaN(selectedStart)){
-          // console.log("----------Without checking Start----------")
           resolve(state.DBActsArr)
         }else{
-          // console.log("----------Result after checking Start:----------")
           for (let activityVar1 of state.DBActsArr){
             if((selectedStart - Date.parse(activityVar1.details.date.start))<=0){
               console.log(activityVar1.details.title)
@@ -120,10 +115,8 @@ export const store = createStore({
         let selectedEnd = Date.parse(state.searchConds.selectedEndDate);
         let searchResultBySelectedDate = [];
           if(isNaN(selectedEnd) || (searchResultByStart==null)){
-            // console.log("----------Without checking End----------")
             return searchResultByStart;
           }else{
-            // console.log("----------Result after checking End:---------")
             for (let activityVar2 of searchResultByStart){
               if((selectedEnd - Date.parse(activityVar2.details.date.end)) >=0){
                 console.log(activityVar2.details.title)
@@ -141,14 +134,11 @@ export const store = createStore({
 
     searchByArea: (state, targetArr) => {
       let userActObjResult = []
-      // console.log("selected area: " + state.searchConds.selectedArea)
       if((state.searchConds.selectedArea=='') || (targetArr=='')){
-        // console.log("----------Without checking area----------")
         state.searchActArr = targetArr;
         return targetArr;
 
       }else{
-        // console.log("----------Result after checking Area:----------")
         for(let activityVar3 of targetArr){
           if(activityVar3.details.area == state.searchConds.selectedArea){
             console.log(activityVar3.details.title)
@@ -167,7 +157,6 @@ export const store = createStore({
   
     storeArea: (state, selectedArea)=>{ 
       return new Promise(()=>{
-        // console.log('storeArea: ' + selectedArea)
         state.searchConds.selectedArea = selectedArea;
       })
     },

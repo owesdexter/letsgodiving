@@ -114,6 +114,5 @@
   .bonuslist-enter-from,
   .bonuslist-leave-to {
     opacity: 0;
-    /* transform: translateY(30px); */
   }
 </style>

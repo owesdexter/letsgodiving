@@ -128,18 +128,5 @@ label{
   font-size: 1.25rem;
 }
 
-// @media (max-width: 768px){
-//   .datepicker input{
-//     width: 100%;
-//     margin-bottom: 1rem;
-//   };
-// }
-
-/* @media (max-width: 576px){
-  .datepicker input{
-    width: 237.8px;
-  };
-} */
-
 </style>
  

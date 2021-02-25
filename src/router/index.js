@@ -6,7 +6,6 @@ import Host from '../views/Host.vue'
 import Result from '../views/Result.vue'
 import Cart from '../views/Cart.vue'
 import Register from '../views/Register.vue'
-// import FbIframe from '../views/FbIframe.vue'
 
 const routes = [
   {
@@ -44,13 +43,6 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register,
-  //   children: [
-  //     {
-  //       path: '?code='+':code',
-  //       name: 'Register',
-  //       component: Register,
-  //     },
-  //   ]
   },
 ]
 

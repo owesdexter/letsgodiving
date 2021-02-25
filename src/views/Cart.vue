@@ -118,10 +118,4 @@
       margin: 0 !important;
   }
 
-  // .cart-page .cart-route-btn{
-  //   width: 350px;
-  //   @media(max-width: ){
-  //     width: 
-  //   }
-  // }
 </style>

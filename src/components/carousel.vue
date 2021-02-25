@@ -24,11 +24,10 @@
 <script>
 import {reactive} from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue';
-  // Import Swiper styles
-  import 'swiper/swiper.scss';
-  import 'swiper/components/navigation/navigation.scss';
-  import 'swiper/components/pagination/pagination.scss';
-  import 'swiper/components/scrollbar/scrollbar.scss';
+import 'swiper/swiper.scss';
+import 'swiper/components/navigation/navigation.scss';
+import 'swiper/components/pagination/pagination.scss';
+import 'swiper/components/scrollbar/scrollbar.scss';
 export default{
     
     setup(){

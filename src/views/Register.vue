@@ -24,7 +24,6 @@
     </div>
 </template>
 <script>
-// import {ref, onMounted} from 'vue';
 import {ref, reactive, computed, onMounted, onBeforeUnmount} from 'vue';
 import {useStore} from 'vuex';
 import {useRouter} from 'vue-router'

@@ -132,7 +132,7 @@
           },
         },
         isLogin: true,
-        // isLogin: isNaN(store.state.profile.loginTime),
+        // isLogin: isNaN(store.state.profile.loginTime), // For blocking unlogined user
         isSubmitErr: false,
         isNumErr: false,
 

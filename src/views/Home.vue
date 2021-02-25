@@ -51,10 +51,6 @@
 
 <style>
 
-/* .banner{
-  margin-bottom: 60px;
-} */
-
 .title{
   color: white;
   font-size: 4rem;

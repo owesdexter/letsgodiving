@@ -24,17 +24,11 @@
 
 <script>
   import {reactive, inject} from 'vue';
-  // import {useStore} from 'vuex';
   import likeBtn from './likeBtn'
   export default {
     setup(){
-      // const store = useStore;
-
       const isDetails = inject('isDetails', false);
       const sourceActObj = inject('sourceActObj');
-      // const actID = inject('actID')
-
-      // const isAdded = ref(store.state.userActObj[actID].isAdded)
 
       const items = reactive({
         activity: sourceActObj,
@@ -44,7 +38,6 @@
       return{
         items,
         isDetails,
-        // isAdded,
       }
     },
 

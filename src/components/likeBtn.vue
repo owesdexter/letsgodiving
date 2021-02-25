@@ -18,11 +18,11 @@
         activity: store.state.userActObj[actID],
         isAdded: store.state.userActObj[actID].isAdded,
         isLogin: true,
-        // isLogin: isNaN(store.state.profile.loginTime),
+        // isLogin: isNaN(store.state.profile.loginTime),   // For blocking unlogined user
       })
 
       const add = ()=>{
-        // if (items.isLogin){
+        // if (items.isLogin){    // For blocking unlogined user
           if(!items.isAdded){  
             store.commit('storetoCart', actID)
           }else{
