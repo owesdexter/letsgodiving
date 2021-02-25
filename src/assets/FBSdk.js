@@ -26,7 +26,7 @@ var userProfile ={};
 function profileChange(res, resolve){
   console.log('profilechange')
   if (res.status === 'connected') {
-    window.FB.api("/me", "GET", { fields: 'id, name, picture, link' }, function (response) {
+    window.FB.api("/me", "GET", { fields: 'id, name, picture' }, function (response) {
       if (response.error) {
         console.log(response);
       } else {
@@ -34,7 +34,7 @@ function profileChange(res, resolve){
           userProfile.id =  response.id;
           userProfile.name = response.name;
           userProfile.userPicURL = response.picture.data.url;
-          userProfile.link = 'https://www.facebook.com/juzhong.chen';
+          userProfile.link = '';
           userProfile.loginTime = now.toString();
           userProfile.logoutTime = false;
           userProfile.cartIndexArr = {};

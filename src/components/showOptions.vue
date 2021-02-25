@@ -42,7 +42,9 @@ export default {
             searchResult: computed(()=>{
                 let resultArr = [];
                 for(let option of optionSource){
-                    if(option.title.startsWith(items.keywords)){
+                    if(items.keywords=='' && items.isKeying==true){
+                        return optionSource
+                    }else if(option.title.startsWith(items.keywords)){
                         resultArr.push(option)
                     }
                 }

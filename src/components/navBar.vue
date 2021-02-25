@@ -17,15 +17,19 @@
 <script>
 import loginButton from './loginButton'
     export default{
-        setup(){
-            const loginURL = "https://www.facebook.com/v9.0/dialog/oauth/?"
-                +"client_id=248738799749062"
-                +"&redirect_uri=https://localhost:8080/register"
-                +"&state=gogo";
-            return{
-                loginURL,
-            }
-        },
+        // setup(){
+        //     let now = new Date();
+        //     let statement = Date.parse(now) + 248738799749062;
+
+        //     const loginURL = "https://www.facebook.com/v9.0/dialog/oauth/?"
+        //         +"client_id=248738799749062"
+        //         +"&redirect_uri=https://localhost:8080/register"
+        //         +"&state=" 
+        //         + statement;
+        //     return{
+        //         loginURL,
+        //     }
+        // },
         components:{
             loginButton,
             

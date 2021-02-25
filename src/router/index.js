@@ -5,7 +5,7 @@ import Activities from '../views/Activities.vue'
 import Host from '../views/Host.vue'
 import Result from '../views/Result.vue'
 import Cart from '../views/Cart.vue'
-// import Register from '../views/Register.vue'
+import Register from '../views/Register.vue'
 // import FbIframe from '../views/FbIframe.vue'
 
 const routes = [
@@ -40,10 +40,10 @@ const routes = [
     name: 'Cart',
     component: Cart,
   },
-  // {
-  //   path: '/register',
-  //   name: 'Register',
-  //   component: Register,
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
   //   children: [
   //     {
   //       path: '?code='+':code',
@@ -51,7 +51,7 @@ const routes = [
   //       component: Register,
   //     },
   //   ]
-  // },
+  },
 ]
 
 const router = createRouter({

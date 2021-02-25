@@ -15,7 +15,7 @@
             </li>
             <li class="act-details-items"><span class="act-details-icon material-icons ">event_note</span>{{activity.details.date.start}} ~ {{activity.details.date.end}}</li>
             <div class="d-flex d-xl-block">
-              <li class="act-details-items w-50 mb-1 mb-xl-2"><span class="act-details-icon material-icons">map</span>{{activity.details.area}}</li>
+              <li class="act-details-items mb-1 mb-xl-2"><span class="act-details-icon material-icons">map</span>{{activity.details.area}}</li>
               <li class="act-details-items mb-1 mb-xl-2"><span class="act-details-icon material-icons">perm_identity</span>{{activity.details.num}}</li>
             </div>
           </ul>

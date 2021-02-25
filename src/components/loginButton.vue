@@ -3,20 +3,23 @@
       class="btn btn-outline-light btn-login rounded-pill" 
       id="login-btn" 
       @click="fbLogin" 
+      :class="{disabled: isLogining}"
     >{{loginProps.loginButtonText}}</button>
     
 </template>
 
 <script>
-  import {computed, reactive} from 'vue'
+  import {computed, reactive, ref} from 'vue'
+  import {useRouter} from 'vue-router'
   import '../assets/FBSdk.js';
-  import FB_SDK from '../assets/FBSdk.js';
   import{useStore} from 'vuex';
 
-  
+
   export default{
     setup(){
       const store = useStore();
+      const router = useRouter();
+      let isLogining = ref(store.state.isLogining)
 
       const loginProps = reactive({
         loginStatus: computed(() => {
@@ -32,26 +35,30 @@
       }) 
 
       async function fbLogin(){
-
         if(isNaN(store.state.profile.loginTime)){
-          let logoutTime = new Date;
-          store.state.profile.logoutTime = logoutTime.toString();
+          // Logout
+          router.push({ path: '' })
           store.dispatch('userLogout');
-
-          let profile = await FB_SDK.FBlogout();
-          store.commit('storeProfile', profile);
-          document.location.reload();
           
         }else{
-          let profile = await FB_SDK.FBlogin();
-          store.dispatch('storeProfile', profile);
-          store.dispatch('userLogin');
+          // Login
+          let now = new Date();
+          let statement = Date.parse(now) + 248738799749062;
+          window.location.href = "https://www.facebook.com/v9.0/dialog/oauth/?"
+            +"client_id=248738799749062"
+            +"&redirect_uri=https://localhost:8080/register"
+            +"&state=" 
+            + statement;
+          isLogining.value = true;
         }
       }
+
+      
 
       return{
         loginProps,
         fbLogin,
+        isLogining,
       }
 
     }

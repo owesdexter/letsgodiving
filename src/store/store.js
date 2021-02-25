@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
-import {apigetUser, apiUserRegister, apigetAct} from '../assets/axiosAPI.js';
+import {apigetUser, apiUserRegister, apigetAct, getFBToken, getUserFBData} from '../assets/axiosAPI.js';
 import createPersistedState from 'vuex-persistedstate';
+
 
 export const store = createStore({
 /*----------------------------state----------------------------*/
@@ -9,6 +10,7 @@ export const store = createStore({
     DBActsArr: [],
     userActObj: {},
     searchActArr: [],
+    isLogining: false,
     profile: {
       id: '',
       name: '未登入',
@@ -66,7 +68,6 @@ export const store = createStore({
     getData: state => {
       apigetAct()
         .then(res => { 
-            console.log("getData from DB")
             const resultArray = [];
             let DBKeys = Object.keys(res.data);
             let n = DBKeys.length;
@@ -90,9 +91,7 @@ export const store = createStore({
 
             state.searchActArr = [...state.DBActsArr];
 
-            
-            
-
+            console.log("gotData from DB")
           })
         //   .then(()=>{   
         // });
@@ -219,6 +218,8 @@ export const store = createStore({
     },
 
     uploadUser: state => {
+      let logoutTime = new Date;
+      state.profile.logoutTime = logoutTime.toString();
       apiUserRegister(state.profile.id, state.profile);
       console.log('user uploaded')
     },
@@ -237,32 +238,74 @@ export const store = createStore({
 
     storeLogoutTime: (state, payload) => {
       state.profile.logoutTime = payload;
+    },
+
+    unLogining: (state)=>{
+      state.isLogining = false;
+    },
+
+    Logining: (state)=>{
+      state.isLogining = true;
     }
 
   },
 
 /*----------------------------action----------------------------*/
-
   actions: {
-    userLogin: ({dispatch, state})=>{
-      console.log('start login process');
-      return dispatch('getUserData')
-      .then(()=>{
-        dispatch('resetUserActObj')
-        console.log(state.profile.cartKeyObj);
-      }).then(()=>{
-        dispatch('updateCart')
-      }).then(()=>{
-        document.location.reload();
-      }).catch((err)=>{
-        console.log(err)
-      })
+    userLogin: ({dispatch}, code)=>{
+      console.log('userLogin');
+      return new Promise(resolve=>{
+        getFBToken(code).then(res =>{
+          let profile = getUserFBData(res.data.access_token).then(res =>{
+            let now = new Date;
+            let userProfile = {}
+            userProfile.id = res.data.id;
+            userProfile.name = res.data.name;
+            userProfile.userPicURL = res.data.picture.data.url;
+            userProfile.link = '';
+            userProfile.loginTime = now.toString();
+            userProfile.logoutTime = false;
+            userProfile.cartKeyObj = {};
+            userProfile.order = {};
+            return userProfile;
+          })
+        return profile
+        }).then(profile=>{
+          dispatch('storeProfile', profile);
+        }).then(()=>{
+          dispatch('getUserData')
+        }).then(()=>{
+          dispatch('resetUserActObj')
+        }).then(()=>{
+          dispatch('updateCart')
+        }).then(()=>{
+          dispatch('unLogining')
+          resolve();
+        }).catch((err)=>{
+          console.log(err);
+        })
+      });
     },
 
     userLogout: ({dispatch})=>{
       console.log('start logout process');
       return dispatch('uploadUser').then(()=>{
         dispatch('resetUserActObj');
+      }).then(()=>{
+        let userProfile = {}
+        userProfile.id =  '';
+        userProfile.name = '請先登入';
+        userProfile.userPicURL = require('@/assets/imgs/unloggined.png');
+        userProfile.link = '';
+        userProfile.loginTime = false;
+        userProfile.logoutTime = false;
+        userProfile.cartKeyObj = {};
+        userProfile.order = {};
+        return userProfile;
+      }).then(profile=>{
+        dispatch('storeProfile', profile);
+      }).then(()=>{
+        // document.location.reload();
       })
     },
 
@@ -280,7 +323,6 @@ export const store = createStore({
         resolve();
       })
     },
-
 
     getUserData: ({state})=>{
       console.log('start download user data')
@@ -345,28 +387,44 @@ export const store = createStore({
       })
     },
 
-    // manualLogin: ({dispatch, state})=>{
-    //   console.log('manualLogin');
+    Logining: ({commit})=>{
+      return new Promise( resolve =>{
+        commit('unLogining');
+        resolve()
+      })
+    },
+
+    unLogining: ({commit})=>{
+      return new Promise( ()=>{
+        commit('unLogining');
+      })
+    },
+
+    
+
+    // userLogin: ({dispatch, state})=>{
+    //   console.log('start login process');
     //   return dispatch('getUserData')
     //   .then(()=>{
     //     dispatch('resetUserActObj')
     //     console.log(state.profile.cartKeyObj);
     //   }).then(()=>{
     //     dispatch('updateCart')
+    //   }).then(()=>{
+    //     document.location.reload();
     //   }).catch((err)=>{
-    //     console.log(err);
+    //     console.log(err)
     //   })
     // },
 
   },
 
-
   plugins: [
     createPersistedState({
       storage: window.sessionStorage,
     })
-  ],    
+  ] 
 
-});
+})
 
 

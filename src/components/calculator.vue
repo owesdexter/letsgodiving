@@ -11,14 +11,16 @@
       <li class="mb-3">
           <h5 class="mb-1 text-md-m font-weight-bold">使用折扣碼:</h5>
           <ul class="mb-2">
-            <li :key="index" v-for="(bonus, index) in selectedBonus"  
-            class="d-flex justify-content-between align-items-center text-dark">
-              <span>{{bonus.title}}</span>
-              <div class="d-flex justify-content-end align-items-center">
-                <span>{{bonus.desc}}</span>
-                <button @click="removeBonus(index)" class="btn btn-link text-secondary"><i class="fas fa-times"></i></button>
-              </div>
-            </li>
+            <transition-group name="bonuslist" tag="ul">
+              <li :key="index" v-for="(bonus, index) in selectedBonus"  
+              class="bonuslist-item d-flex justify-content-between align-items-center text-dark ">
+                <span>{{bonus.title}}</span>
+                <div class="d-flex justify-content-end align-items-center">
+                  <span>{{bonus.desc}}</span>
+                  <button @click="removeBonus(index)" class="btn btn-link text-secondary"><i class="fas fa-times"></i></button>
+                </div>
+              </li>
+            </transition-group>  
           </ul>
       </li>
       <li class="d-flex justify-content-between text-primary align-items-center">
@@ -101,7 +103,17 @@
   }
 </script>
 
-<style>
+<style scope>
+
+  .bonuslist-enter-active,
+  .bonuslist-leave-active {
+    transition: all 1s ease;
+  }
 
 
+  .bonuslist-enter-from,
+  .bonuslist-leave-to {
+    opacity: 0;
+    /* transform: translateY(30px); */
+  }
 </style>
