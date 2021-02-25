@@ -11,7 +11,7 @@
 <script>
   import {computed, reactive, ref} from 'vue'
   import {useRouter} from 'vue-router'
-  import '../assets/FBSdk.js';
+  // import '../assets/FBSdk.js';
   import{useStore} from 'vuex';
 
 

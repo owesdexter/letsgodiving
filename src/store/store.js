@@ -278,8 +278,6 @@ export const store = createStore({
           dispatch('resetUserActObj')
         }).then(()=>{
           dispatch('updateCart')
-        }).then(()=>{
-          dispatch('unLogining')
           resolve();
         }).catch((err)=>{
           console.log(err);
@@ -305,7 +303,7 @@ export const store = createStore({
       }).then(profile=>{
         dispatch('storeProfile', profile);
       }).then(()=>{
-        // document.location.reload();
+        document.location.reload();
       })
     },
 
@@ -389,33 +387,17 @@ export const store = createStore({
 
     Logining: ({commit})=>{
       return new Promise( resolve =>{
-        commit('unLogining');
+        commit('Logining');
         resolve()
       })
     },
 
     unLogining: ({commit})=>{
-      return new Promise( ()=>{
+      return new Promise( resolve =>{
         commit('unLogining');
+        resolve()
       })
     },
-
-    
-
-    // userLogin: ({dispatch, state})=>{
-    //   console.log('start login process');
-    //   return dispatch('getUserData')
-    //   .then(()=>{
-    //     dispatch('resetUserActObj')
-    //     console.log(state.profile.cartKeyObj);
-    //   }).then(()=>{
-    //     dispatch('updateCart')
-    //   }).then(()=>{
-    //     document.location.reload();
-    //   }).catch((err)=>{
-    //     console.log(err)
-    //   })
-    // },
 
   },
 

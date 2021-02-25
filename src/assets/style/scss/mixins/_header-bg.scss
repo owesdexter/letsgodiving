@@ -1,8 +1,11 @@
 .banner{
-    height: 650px;
-    background-image: url(~@/assets/style/css/imgs/header-bg.png);
+    height: 700px;
+    background-image: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.4)), url(~@/assets/style/css/imgs/header-bg.png),;
     background-repeat: no-repeat;
     background-position: 20% 30%;
     background-size: cover;
     position: relative;
+    margin-bottom: 48px;
 }
+
+

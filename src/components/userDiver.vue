@@ -27,13 +27,13 @@ export default {
 	border-radius: 50%;
 	position: absolute;
     top: -13px;
-    right: 60px;
+    right: 68px;
 
 	@media (max-width: 768px){
 		width: 25px;
 		height: 25px;
-        top: -4px;
-        right: 74px;
+        top: -6px;
+        right: 80px;
     }
 }
 

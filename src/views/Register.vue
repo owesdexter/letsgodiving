@@ -13,7 +13,7 @@
 
                     <user-diver :userProfile="items.userProfile"/>
                     <div class="loading-text position-relative mt-3 mt-md-4">
-                        <h2 class="text-primary d-inline-block mr-1 h4-md">已登入，跳轉中</h2>
+                        <h2 class="text-primary d-inline-block mr-1 h4-md">{{hintText}}</h2>
                         <span class="dot" v-if="stage1" key="bubble1">·</span>
                         <span class="dot" v-if="stage2" key="bubble2">·</span>
                         <span class="dot" v-if="stage3" key="bubble3">·</span>
@@ -25,7 +25,7 @@
 </template>
 <script>
 // import {ref, onMounted} from 'vue';
-import {ref, reactive, computed, onMounted} from 'vue';
+import {ref, reactive, computed, onMounted, onBeforeUnmount} from 'vue';
 import {useStore} from 'vuex';
 import {useRouter} from 'vue-router'
 import userDiver from '../components/userDiver'
@@ -33,18 +33,27 @@ export default {
     setup(){
         const router = useRouter();
         const store = useStore();
-        // let userProfile = ref(store.state.profile);
+
         const items = reactive({
-            userProfile: computed(()=>store.state.profile)
+            userProfile: computed(()=>store.state.profile),
+            isLogin: false,
         });
 
 
         const totalDelay = 1800;
         const totalStage = 3;
         const sectionDelay = totalDelay/totalStage;
+
         let stage1 = ref(false);
         let stage2 = ref(false);
         let stage3 = ref(false);
+        let hintText = ref(computed(()=>{
+            if(items.isLogin){
+                return '登入成功，跳轉中'
+            }else{
+                return '登入失敗，跳轉中'
+            }
+        }));
         
         onMounted(()=>{
             for(let i=1; i<=totalStage*5; i++){
@@ -80,18 +89,28 @@ export default {
 
         (async()=>{
             let restURL = window.location.search.slice(1);
-            let code = restURL.split('&')[0];
             await store.dispatch('Logining')
-            await store.dispatch('userLogin', code);
-            setTimeout(()=>{router.push({ path: '/result' })},3000);
+            if(restURL.startsWith('code')){
+                items.isLogin = true;
+                let code = restURL.split('&')[0];
+                await store.dispatch('userLogin', code);
+                setTimeout(()=>{router.push({ path: '/result' })},3000);
+            }else{
+                items.isLogin = false;
+                setTimeout(()=>{router.push({ path: '/result' })},3000);
+            }
         })();
+
+        onBeforeUnmount(()=>{
+            store.dispatch('unLogining')
+        })
 
         return {
             items,
             stage1,
             stage2,
             stage3,
-
+            hintText,
         }
     },
     components:{
@@ -106,17 +125,17 @@ export default {
     }
 
     .loading-pic-box{
-        width: 280px;
+        width: 310px;
         @media (max-width: 768px){
-            width: 230px;
+            width: 245px;
         }
     }
 
     .bubble-group{
-        left: 250px;
-        top: 8px;
+        left: 260px;
+        top: 15px;
         @media (max-width: 768px){
-            left: 165px;
+            left: 180px;
             top: 9px;
         }
     }

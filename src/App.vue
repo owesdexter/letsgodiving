@@ -22,18 +22,13 @@
 </template>
 
 <script>
-  import { onBeforeMount,onMounted} from 'vue'
-  import FB_SDK from './assets/FBSdk.js';
+  import {onMounted} from 'vue'
   import{useStore} from 'vuex';
   import navBar from './components/navBar';
 
   export default{
     setup(){
       const store = useStore();
-
-      onBeforeMount(()=>{
-        FB_SDK.initFbSdk();
-      });
 
       onMounted(()=>{
         (async ()=>{

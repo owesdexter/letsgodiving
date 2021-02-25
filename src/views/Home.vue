@@ -3,7 +3,7 @@
       <div class="container container-md container-lg container-xl">
         <div class="d-flex justify-content-center ">
           <div class="hero-text-box d-flex flex-column justify-content-center">
-            <h1 class="title text-white">Let's go diving</h1>
+            <h1 class="title text-shadow-primary">Let's go diving</h1>
             <search-bar/>
           </div>  
         </div>
@@ -50,13 +50,16 @@
 </script>
 
 <style>
-.banner{
+
+/* .banner{
   margin-bottom: 60px;
-}
+} */
 
 .title{
+  color: white;
   font-size: 4rem;
   font-family: 'Caveat', cursive;
+  text-shadow: 2px 2px 3px #002760;
 }
 
 .hero-text-box{
