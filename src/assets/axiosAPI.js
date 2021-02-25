@@ -40,7 +40,7 @@ export const getFBToken = code => {
   return new Promise(resolve=>{
     let requestURL = 'https://graph.facebook.com/v9.0/oauth/access_token?'
       +'client_id=248738799749062'
-      +'&redirect_uri=https://localhost:8080/register'
+      +'&redirect_uri=https://sheltered-cove-28264.herokuapp.com/register'
       +'&client_secret=fbfa2d392849e1a1fd7dd8164e40ba83&'
     +code;
     resolve(axios.get(requestURL))
