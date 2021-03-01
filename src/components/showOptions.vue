@@ -19,10 +19,8 @@
 </template>
 
 <script>
-
 import {computed, reactive, inject} from 'vue';
 import {useStore} from 'vuex';
-
 export default {
     props:{
         bonusIndexArr:{
@@ -33,8 +31,6 @@ export default {
     setup(props, context){
         const store = useStore();
         const optionSource = inject('optionSource', store.state.bonus);
-
-
         const items = reactive({
             keywords:'',
             isKeying: '',
@@ -56,7 +52,6 @@ export default {
                 return resultArr.slice(0, n)
             })                
         });
-
         const keying = value=>{
             items.isBonusAdded = false;
             if(value==''){
@@ -67,7 +62,6 @@ export default {
                 items.keywords = value;
             }
         }
-
         const selectOption = optionIndex =>{
             if(optionIndex>100){
                 console.log('no result')
@@ -80,12 +74,10 @@ export default {
                 items.isBonusAdded = true;
             }
         }
-
         const blurEvent = ()=>{
             items.isBonusAdded = false;
             setTimeout(()=>{items.isKeying = false}, 500);
         }
-
         return{
             items,
             selectOption,
@@ -102,7 +94,6 @@ export default {
         top: 0;
         z-index: 1;
     };
-
     .options{
         
         background-color: #fff;

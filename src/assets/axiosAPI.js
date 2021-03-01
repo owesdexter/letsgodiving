@@ -11,10 +11,6 @@ const activityConfig = axios.create({
 });
 
 //FB Graph API
-// const getToken = axios.create({
-//   baseURL: ;
-// });
-
 const checkToken = axios.create({
   baseURL: 'graph.facebook.com/debug_token?'
     +'input_token='
@@ -24,8 +20,7 @@ const checkToken = axios.create({
 // User api
 export const apigetUser = userID => userConfig.get(`${userID}.json`);
 export const apiUserRegister = (userID, data) => userConfig.post(`${userID}.json`, data);
-// export const apiUserLogin = data => userConfig.post('/signOut', data);
-// export const apiUserLogout = data => userConfig.post('/signOut', data);
+
 
 
 // Activities api
@@ -56,8 +51,6 @@ export const getUserFBData = accessToken =>{
   })
 }
 
-// Use graph API
-// export const getUserFBData = accessToken => FBGraphAPI.get(accessToken);
 
 // check access_token
 export const checkFBToken = (inputToken, accessToken) => checkToken.get(inputToken +'&'+ accessToken);

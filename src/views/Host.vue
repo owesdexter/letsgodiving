@@ -73,7 +73,7 @@
           <div class="form-group row">
             <label for="comment" class="col col-md-3 col-lg-2 col-form-label"><span class="text-white">*</span>備註</label>
             <div class="col-8 col-md">
-              <textarea id="comment" class="form-control" name="description" placeholder="說明..." maxlength="240" v-model="items.activity.details.description"></textarea>
+              <textarea id="comment" class="form-control" name="description" placeholder="說明..." maxlength="160" v-model="items.activity.details.description"></textarea>
             </div>
           </div>
 
@@ -149,7 +149,7 @@
           items.isNumErr = false;
           items.isSubmitErr = true;
         }else{
-          // Submit activity
+          // Data re-Arrangement
           let act = items.activity;
           let now = new Date();
           if(act.details.date.start>items.activity.details.date.end){
@@ -158,26 +158,27 @@
             act.details.date.end = replacement;
           }
           
-          if(!isNaN(store.state.profile.loginTime)){
-            // act.host.userPicURL = 'https://raw.githubusercontent.com/owesdexter/letsgodiving/master/src/assets/imgs/unloggined.png';
-            act.host.name = '未登入'
-            act.host.id = now.getTime();
-          }
+          // if(!isNaN(store.state.profile.loginTime)){
+          //   act.host.name = '未登入'
+          // }
 
           if(!isNaN(act.details.fee)){
             act.details.fee = 0;
           }else{
             act.details.fee = parseInt(items.activity.details.fee)
           }
-
+          
           act.num = parseInt(items.activity.details.num)
+          
           act.bulitTime = now.getTime();
-          store.dispatch('reloadUserActObj')
-          apipostAct(act)
-          console.log('upload activity!')
+
+          // Submit activity
+          apipostAct(act);
+          // store.dispatch('reloadUserActObj');
+          console.log('upload activity!');
 
           // Redirect to Home
-          router.push({ path: '/result' });
+          router.push({ name: 'Home' });
           setTimeout(()=>{ window.location.reload(); },500);
         }
       };
