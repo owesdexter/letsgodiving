@@ -19,6 +19,7 @@ export const store = createStore({
       logoutTime: false,
       cartKeyObj: {},
       order:{},
+      selectedBonus: [],
       link: '',
       license: '',
       phone:'',
@@ -77,7 +78,11 @@ export const store = createStore({
             for (let key of DBKeys){
               state.DBActObj[key].actID = key;
             }
-            state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
+
+            // for unLogined user
+            if(!isNaN(state.profile.loginTime)){
+              state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
+            }
 
             for (let key in state.DBActObj) {
               resultArray.unshift(state.DBActObj[key]);
@@ -180,6 +185,14 @@ export const store = createStore({
       delete state.profile.cartKeyObj[actID];
     },
 
+    storeBonus: (state, bonusID)=>{
+      state.profile.selectedBonus.push(state.bonus[bonusID]);
+    },
+
+    deleteBonus: (state, index)=>{
+      state.profile.selectedBonus.splice(index, 1);
+    },
+
     addAttendee: (state, actID) =>{
       state.profile.cartKeyObj[actID].attendNum++;
       state.profile.cartKeyObj[actID].registerFee = state.userActObj[actID].details.fee * state.profile.cartKeyObj[actID].attendNum;
@@ -199,30 +212,43 @@ export const store = createStore({
         state.profile.cartKeyObj = {};
       }
       console.log('cart is updated')
+      console.log(state.userActObj);
+    },
+
+    makeOrder:(state) => {
+      let now = new Date();
+      let orderID = Date.parse(now);
+      state.profile.order[orderID].attendActs = JSON.parse(JSON.stringify(state.profile.cartKeyObj));
+      state.profile.order[orderID].selectedBonus = state.profile.selectedBonus;
+      console.log('makeOrder');
     },
 
     storeProfile: (state, profile) => {
       state.profile = Object.assign({}, profile);
       console.log('storeProfile');
+      console.log(state.userActObj);
     },
 
     uploadUser: state => {
       let logoutTime = new Date;
       state.profile.logoutTime = logoutTime.toString();
+      if(!isNaN(state.profile.id)){
+        state.profile.id = ( '999' + Date.parse(logoutTime) )
+      }
       apiUserRegister(state.profile.id, state.profile);
       console.log('user uploaded')
     },
     
-    resetUserActObj: (state) => {
+    resetUserActObj: state => {
       state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
-      for (let key in state.userActObj){
-        state.userActObj[key].actID = key;
-      }
+      // for (let key in state.userActObj){
+      //   state.userActObj[key].actID = key;
+      // }
       console.log('resetUserActObj')
     },
 
     cleanCart: (state) => {
-      state.profile.cartKeyObj=[];
+      state.profile.cartKeyObj={};
     },
 
     storeLogoutTime: (state, payload) => {
@@ -241,7 +267,7 @@ export const store = createStore({
 
 /*----------------------------action----------------------------*/
   actions: {
-    userLogin: ({dispatch}, code)=>{
+    userLogin: ({dispatch, state}, code)=>{
       console.log('userLogin');
       return new Promise(resolve=>{
         getFBToken(code).then(res =>{
@@ -262,11 +288,16 @@ export const store = createStore({
         }).then(profile=>{
           dispatch('storeProfile', profile);
         }).then(()=>{
-          dispatch('getUserData')
-        }).then(()=>{
+          console.log(state.userActObj);
           dispatch('resetUserActObj')
         }).then(()=>{
+          console.log(state.userActObj);
+          dispatch('getUserData')
+
+        }).then(()=>{
+
           dispatch('updateCart')
+          console.log(state.userActObj);
           resolve();
         }).catch((err)=>{
           console.log(err);
@@ -296,12 +327,11 @@ export const store = createStore({
       })
     },
 
-    submitOrder: ({dispatch, commit})=>{
+    submitOrder: async ({dispatch})=>{
       console.log('submitOrder');
-      return dispatch('uploadUser')
-      .then(()=>{
-        commit('cleanCart');
-      })
+      await dispatch('makeOrder');
+      await dispatch('cleanCart');
+      await dispatch('uploadUser');
     },
 
     uploadUser: ({commit}, profile)=>{
@@ -316,15 +346,20 @@ export const store = createStore({
       return new Promise((resolve)=>{
         apigetUser(state.profile.id).then( res =>{
           let finalLoginStatus = {};
-          Object.keys(res.data).forEach( key =>{
-            finalLoginStatus = res.data[key];
-          })
-          if(!finalLoginStatus.cartKeyObj){
-            state.profile.cartKeyObj = {};
+          if(isNaN(res.data)){
+            Object.keys(res.data).forEach( key =>{
+              finalLoginStatus = res.data[key];
+            })
+            if(!finalLoginStatus.cartKeyObj){
+              state.profile.cartKeyObj = {};
+              
+            }else{
+              state.profile.cartKeyObj = JSON.parse(JSON.stringify(finalLoginStatus.cartKeyObj));
+            }
+            resolve();
           }else{
-            state.profile.cartKeyObj = JSON.parse(JSON.stringify(finalLoginStatus.cartKeyObj));
+            resolve()
           }
-          resolve();
         }).catch((err)=>{
           console.log(err)
           resolve()
@@ -332,10 +367,10 @@ export const store = createStore({
       })
     },
 
-    reloadUserActObj: async ({dispatch})=>{
-      await dispatch('getData')
-      await dispatch('resetUserActObj')
-    },
+    // reloadUserActObj: async ({dispatch})=>{
+    //   await dispatch('getData')
+    //   await dispatch('resetUserActObj')
+    // },
 
     resetAllData: async({dispatch})=>{
       await dispatch('getData')
@@ -355,15 +390,28 @@ export const store = createStore({
       })
     },
 
-    updateCart: ({commit}, payload)=>{
+    updateCart: ({commit})=>{
       return new Promise(()=>{
-        commit('updateCart', payload);
+        commit('updateCart');
+      })
+    },
+
+    cleanCart: ({commit}, payload)=>{
+      return new Promise(()=>{
+        commit('cleanCart', payload);
       })
     },
 
     storeLogoutTime: ({commit}, payload)=>{
       return new Promise( resolve =>{
         commit('storeLogoutTime', payload)
+        resolve();
+      })
+    },
+
+    makeOrder: ({commit})=>{
+      return new Promise( resolve =>{
+        commit('makeOrder')
         resolve();
       })
     },
@@ -387,6 +435,8 @@ export const store = createStore({
         resolve()
       })
     },
+
+    
 
   },
 

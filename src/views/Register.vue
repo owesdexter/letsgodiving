@@ -98,6 +98,7 @@ export default {
                 items.isLogin = false;
                 setTimeout(()=>{router.push({ path: '/result' })},3000);
             }
+            console.log(store.state.userActObj);
         })();
 
         onBeforeUnmount(()=>{

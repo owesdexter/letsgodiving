@@ -51,7 +51,8 @@
 
       const items = reactive({
         totalFee: 0,
-        isLogin: isNaN(store.state.profile.loginTime),
+        // isLogin: isNaN(store.state.profile.loginTime),  // For blocking unlogined user
+        isLogin: true,
         actArraysLength: computed(() => {
           let n = (()=>{
             for(let key in store.state.profile.cartKeyObj){
@@ -82,9 +83,10 @@
 
       const submitOrder = ()=>{
         if(items.isLogin==true){
-          let now = new Date();
-          let orderID = Date.parse(now);
-          store.state.profile.order[orderID] = JSON.parse(JSON.stringify(store.state.profile.cartKeyObj));
+          // let now = new Date();
+          // let orderID = Date.parse(now);
+          // store.state.profile.order[orderID] = JSON.parse(JSON.stringify(store.state.profile.cartKeyObj));
+          
           store.dispatch('submitOrder');
           router.push({ path: '/result' });
         }else{

@@ -78,14 +78,16 @@
 
       provide('optionSource', store.state.bonus)
 
-      const getBonusTitle = (bonusIndex)=>{
-        bonusIndexArr.value.push(bonusIndex);
-        selectedBonus.value.push(store.state.bonus[bonusIndex]);  
+      const getBonusTitle = bonusID=>{
+        bonusIndexArr.value.push(bonusID);
+        selectedBonus.value.push(store.state.bonus[bonusID]); 
+        store.commit('storeBonus', bonusID);
       }
 
-      const removeBonus = index =>{
-        selectedBonus.value.splice(index, 1)
-        bonusIndexArr.value.splice(index, 1)
+      const removeBonus = Index =>{
+        selectedBonus.value.splice(Index, 1);
+        bonusIndexArr.value.splice(Index, 1);
+        store.commit('deleteBonus', Index);
       }
 
       return{
