@@ -3,6 +3,7 @@ import {apigetUser, apiUserRegister, apigetAct, getFBToken, getUserFBData} from 
 import createPersistedState from 'vuex-persistedstate';
 
 
+
 export const store = createStore({
 /*----------------------------state----------------------------*/
   state: {
@@ -19,12 +20,12 @@ export const store = createStore({
       logoutTime: false,
       cartKeyObj: {},
       order:{},
-      selectedBonus: [],
       link: '',
       license: '',
       phone:'',
       email:'',
     },
+    selectedBonus: [],
     searchConds:{
       selectedStartDate: '',
       selectedEndDate: '',
@@ -96,8 +97,35 @@ export const store = createStore({
             state.searchActArr = [...state.DBActsArr];
 
             console.log("gotData from DB")
-          })
+
+        })
     },
+
+    getUserData: state =>{
+      console.log('start download user data')
+      apigetUser(state.profile.id).then( res =>{
+        let finalLoginStatus = {};
+
+        if(isNaN(res.data)){
+          Object.keys(res.data).forEach( key =>{
+            finalLoginStatus = res.data[key];
+          })
+          
+          // Download cart items
+          if(!finalLoginStatus.cartKeyObj){
+            state.profile.cartKeyObj = {};
+          }else{
+            state.profile.cartKeyObj = JSON.parse(JSON.stringify(finalLoginStatus.cartKeyObj));
+          }
+          
+        }else{
+          console.log('first login')
+        }
+        return state.profile
+      })
+    },
+
+    
 
     search: state =>{
       return new Promise( (resolve)=>{
@@ -186,11 +214,11 @@ export const store = createStore({
     },
 
     storeBonus: (state, bonusID)=>{
-      state.profile.selectedBonus.push(state.bonus[bonusID]);
+      state.selectedBonus.push(state.bonus[bonusID]);
     },
 
     deleteBonus: (state, index)=>{
-      state.profile.selectedBonus.splice(index, 1);
+      state.selectedBonus.splice(index, 1);
     },
 
     addAttendee: (state, actID) =>{
@@ -203,57 +231,86 @@ export const store = createStore({
       state.profile.cartKeyObj[actID].registerFee = state.userActObj[actID].details.fee * state.profile.cartKeyObj[actID].attendNum;
     },
 
-    updateCart: (state) => {
-      if(state.profile.cartKeyObj){
-        for(let userActKey in state.profile.cartKeyObj){
-          state.userActObj[userActKey].isAdded = true;
+    updateLikeBtn: state => {
+      let isEmptyCart = ()=>{
+        if(Object.keys(state.profile.cartKeyObj).length  == 0){
+          return true
+        }else{
+          return false
         }
-      }else{
-        state.profile.cartKeyObj = {};
       }
-      console.log('cart is updated')
-      console.log(state.userActObj);
+      
+      setTimeout(()=>{
+        if(!isEmptyCart()){
+          for(let userActKey in state.profile.cartKeyObj){
+            state.userActObj[userActKey].isAdded = true;
+          }
+        }else{
+          state.profile.cartKeyObj = {};
+        }
+      }, 1000)
+
+      console.log('updateLikeBtn')
+
     },
 
-    makeOrder:(state) => {
-      let now = new Date();
-      let orderID = Date.parse(now);
+    makeOrder:(state, orderID) => {
+      state.profile.order[orderID] ={attendActs:{}, orderBonus:[]};
       state.profile.order[orderID].attendActs = JSON.parse(JSON.stringify(state.profile.cartKeyObj));
-      state.profile.order[orderID].selectedBonus = state.profile.selectedBonus;
+      state.profile.order[orderID].orderBonus = state.selectedBonus;
       console.log('makeOrder');
     },
+
+    // updateAct:(state, orderID)=>{
+    //   for(let actID in state.profile.order[orderID].attendActs){
+    //     let newNum = state.DBActObj[actID].details.num - state.profile.order[orderID].attendActs[actID].attendNum
+    //     let numlocation = actID + '/details'
+    //     apipatchAct(numlocation, {num: newNum});
+    //   }
+    //   console.log('updateAct')
+    // },
 
     storeProfile: (state, profile) => {
       state.profile = Object.assign({}, profile);
       console.log('storeProfile');
-      console.log(state.userActObj);
+    },
+
+    resetProfile: state => {
+      state.profile.id =  '';
+      state.profile.name = '請先登入';
+      state.profile.userPicURL = require('@/assets/imgs/unloggined.png');
+      state.profile.link = '';
+      state.profile.loginTime = false;
+      state.profile.logoutTime = false;
+      state.profile.cartKeyObj = {};
+      state.profile.order = {};
     },
 
     uploadUser: state => {
       let logoutTime = new Date;
       state.profile.logoutTime = logoutTime.toString();
-      if(!isNaN(state.profile.id)){
+      if(!isNaN(state.profile.loginTime )){
         state.profile.id = ( '999' + Date.parse(logoutTime) )
       }
       apiUserRegister(state.profile.id, state.profile);
       console.log('user uploaded')
     },
     
+    
     resetUserActObj: state => {
       state.userActObj = JSON.parse(JSON.stringify(state.DBActObj));
-      // for (let key in state.userActObj){
-      //   state.userActObj[key].actID = key;
-      // }
       console.log('resetUserActObj')
     },
 
     cleanCart: (state) => {
       state.profile.cartKeyObj={};
+      console.log('cleanCart')
     },
 
     storeLogoutTime: (state, payload) => {
       state.profile.logoutTime = payload;
     },
+
 
     unLogining: (state)=>{
       state.isLogining = false;
@@ -261,13 +318,13 @@ export const store = createStore({
 
     Logining: (state)=>{
       state.isLogining = true;
-    }
+    },
 
   },
 
 /*----------------------------action----------------------------*/
   actions: {
-    userLogin: ({dispatch, state}, code)=>{
+    userLogin: ({dispatch}, code)=>{
       console.log('userLogin');
       return new Promise(resolve=>{
         getFBToken(code).then(res =>{
@@ -288,117 +345,90 @@ export const store = createStore({
         }).then(profile=>{
           dispatch('storeProfile', profile);
         }).then(()=>{
-          console.log(state.userActObj);
           dispatch('resetUserActObj')
         }).then(()=>{
-          console.log(state.userActObj);
           dispatch('getUserData')
-
         }).then(()=>{
-
-          dispatch('updateCart')
-          console.log(state.userActObj);
+          dispatch('updateLikeBtn')
           resolve();
         }).catch((err)=>{
           console.log(err);
         })
       });
     },
+      
 
-    userLogout: ({dispatch})=>{
+    userLogout: async ({dispatch})=>{
       console.log('start logout process');
-      return dispatch('uploadUser').then(()=>{
-        dispatch('resetUserActObj');
-      }).then(()=>{
-        let userProfile = {}
-        userProfile.id =  '';
-        userProfile.name = '請先登入';
-        userProfile.userPicURL = require('@/assets/imgs/unloggined.png');
-        userProfile.link = '';
-        userProfile.loginTime = false;
-        userProfile.logoutTime = false;
-        userProfile.cartKeyObj = {};
-        userProfile.order = {};
-        return userProfile;
-      }).then(profile=>{
-        dispatch('storeProfile', profile);
-      }).then(()=>{
-        document.location.reload();
-      })
+      await dispatch('uploadUser');
+      await dispatch('resetUserActObj');
+      await dispatch('resetProfile');
+      document.location.reload();
     },
 
     submitOrder: async ({dispatch})=>{
+      let now = new Date();
+      let orderID = Date.parse(now);
       console.log('submitOrder');
-      await dispatch('makeOrder');
+      await dispatch('makeOrder', orderID);
       await dispatch('cleanCart');
       await dispatch('uploadUser');
+      await dispatch('getData');
+      // await dispatch('updateAct', orderID);
+      await dispatch('resetUserActObj');
+      // window.location.reload();
     },
 
-    uploadUser: ({commit}, profile)=>{
+    uploadUser: ({commit})=>{
       return new Promise(resolve=>{
-        commit('uploadUser', profile);
+        commit('uploadUser');
         resolve();
       })
     },
 
-    getUserData: ({state})=>{
-      console.log('start download user data')
-      return new Promise((resolve)=>{
-        apigetUser(state.profile.id).then( res =>{
-          let finalLoginStatus = {};
-          if(isNaN(res.data)){
-            Object.keys(res.data).forEach( key =>{
-              finalLoginStatus = res.data[key];
-            })
-            if(!finalLoginStatus.cartKeyObj){
-              state.profile.cartKeyObj = {};
-              
-            }else{
-              state.profile.cartKeyObj = JSON.parse(JSON.stringify(finalLoginStatus.cartKeyObj));
-            }
-            resolve();
-          }else{
-            resolve()
-          }
-        }).catch((err)=>{
-          console.log(err)
-          resolve()
-        })
+    getUserData: ({commit})=>{
+      return new Promise(resolve=>{
+        commit('getUserData');
+        resolve()
       })
-    },
-
-    // reloadUserActObj: async ({dispatch})=>{
-    //   await dispatch('getData')
-    //   await dispatch('resetUserActObj')
-    // },
-
-    resetAllData: async({dispatch})=>{
-      await dispatch('getData')
-      await dispatch('updateCart')
     },
 
     storeProfile: ({commit}, payload)=>{
-      return new Promise(()=>{
+      return new Promise(resolve=>{
         commit('storeProfile', payload);
+        resolve()
       })
     },
 
-    resetUserActObj: ({commit}, payload)=>{
+    resetProfile: ({commit})=>{
+      return new Promise(()=>{
+        commit('resetProfile');
+      })
+    },
+
+    resetAllData: async({dispatch})=>{
+      await dispatch('getData')
+      await dispatch('updateLikeBtn')
+    },
+
+    resetUserActObj: ({commit})=>{
       return new Promise(resolve=>{
-        commit('resetUserActObj', payload);
+        commit('resetUserActObj');
         resolve();
       })
     },
 
-    updateCart: ({commit})=>{
-      return new Promise(()=>{
-        commit('updateCart');
+    updateLikeBtn: ({commit})=>{
+      return new Promise(resolve=>{
+        commit('updateLikeBtn');
+        resolve();
       })
     },
 
     cleanCart: ({commit}, payload)=>{
-      return new Promise(()=>{
+      return new Promise( resolve =>{
         commit('cleanCart', payload);
+        resolve();
       })
     },
 
@@ -409,16 +439,23 @@ export const store = createStore({
       })
     },
 
-    makeOrder: ({commit})=>{
+    makeOrder: ({commit}, orderID)=>{
       return new Promise( resolve =>{
-        commit('makeOrder')
+        commit('makeOrder', orderID)
         resolve();
       })
     },
 
     getData: ({commit})=>{
-      return new Promise( ()=>{
+      return new Promise( resolve=>{
         commit('getData');
+        resolve()
+      })
+    },
+
+    updateAct: ({commit}, orderID)=>{
+      return new Promise( ()=>{
+        commit('updateAct', orderID);
       })
     },
 

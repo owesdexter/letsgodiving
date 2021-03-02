@@ -24,7 +24,7 @@
     </div>
 </template>
 <script>
-import {ref, reactive, computed, onMounted, onBeforeUnmount} from 'vue';
+import {ref, reactive, computed, onMounted, onUnmounted} from 'vue';
 import {useStore} from 'vuex';
 import {useRouter} from 'vue-router'
 import userDiver from '../components/userDiver'
@@ -98,10 +98,9 @@ export default {
                 items.isLogin = false;
                 setTimeout(()=>{router.push({ path: '/result' })},3000);
             }
-            console.log(store.state.userActObj);
         })();
 
-        onBeforeUnmount(()=>{
+        onUnmounted(()=>{
             store.dispatch('unLogining')
         })
 

@@ -18,6 +18,10 @@
     setup(){
       const store = useStore();
       const router = useRouter();
+      //redirect URL
+      // const redirectURL = 'https://sheltered-cove-28264.herokuapp.com/register';
+      const redirectURL = 'https://localhost:8080/register'
+      
       let isLogining = ref(store.state.isLogining)
 
       const loginProps = reactive({
@@ -45,7 +49,7 @@
           let statement = Date.parse(now) + 248738799749062;
           window.location.href = "https://www.facebook.com/v9.0/dialog/oauth/?"
             +"client_id=248738799749062"
-            +"&redirect_uri=https://sheltered-cove-28264.herokuapp.com/register"
+            +'&redirect_uri=' + redirectURL
             +"&state=" 
             + statement;
           isLogining.value = true;

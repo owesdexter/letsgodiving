@@ -83,10 +83,6 @@
 
       const submitOrder = ()=>{
         if(items.isLogin==true){
-          // let now = new Date();
-          // let orderID = Date.parse(now);
-          // store.state.profile.order[orderID] = JSON.parse(JSON.stringify(store.state.profile.cartKeyObj));
-          
           store.dispatch('submitOrder');
           router.push({ path: '/result' });
         }else{

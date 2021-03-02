@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+//redirect URL
+// const redirectURL = 'https://sheltered-cove-28264.herokuapp.com/register';
+const redirectURL = 'https://localhost:8080/register'
+
 // User api
 const userConfig = axios.create({
   baseURL: 'https://dss-v-profolio.firebaseio.com/users/'
@@ -26,7 +30,7 @@ export const apiUserRegister = (userID, data) => userConfig.post(`${userID}.json
 // Activities api
 export const apigetAct = () => activityConfig.get('.json');
 export const apipostAct = act => activityConfig.post('.json', act);
-export const apipatchAct = (actID, key, data) => activityConfig.patch(`${actID}/`+`${key}`, data);
+export const apipatchAct = (actID, data) => activityConfig.patch(`${actID}.json`, data);
 
 
 //FB Graph API
@@ -35,7 +39,7 @@ export const getFBToken = code => {
   return new Promise(resolve=>{
     let requestURL = 'https://graph.facebook.com/v9.0/oauth/access_token?'
       +'client_id=248738799749062'
-      +'&redirect_uri=https://sheltered-cove-28264.herokuapp.com/register'
+      +'&redirect_uri=' + redirectURL
       +'&client_secret=fbfa2d392849e1a1fd7dd8164e40ba83&'
     +code;
     resolve(axios.get(requestURL))
