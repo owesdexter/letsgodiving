@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 //redirect URL
-// const redirectURL = 'https://sheltered-cove-28264.herokuapp.com/register';
-const redirectURL = 'https://localhost:8080/register'
+const redirectURL = 'https://sheltered-cove-28264.herokuapp.com/register';
+// const redirectURL = 'https://localhost:8080/register'
 
 // User api
 const userConfig = axios.create({

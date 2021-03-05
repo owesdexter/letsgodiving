@@ -19,8 +19,8 @@
       const store = useStore();
       const router = useRouter();
       //redirect URL
-      // const redirectURL = 'https://sheltered-cove-28264.herokuapp.com/register';
-      const redirectURL = 'https://localhost:8080/register'
+      const redirectURL = 'https://sheltered-cove-28264.herokuapp.com/register';
+      // const redirectURL = 'https://localhost:8080/register'
       
       let isLogining = ref(store.state.isLogining)
 
