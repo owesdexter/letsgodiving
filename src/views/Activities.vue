@@ -4,7 +4,7 @@
     :key="activity.index" v-for="(activity) in arr.sourceActArr" >
 
     <router-link 
-        :to="'/activitydetails/' + `${activity.actID}`" 
+        :to="'/activitydetails/' + activity.actID" 
         class="details-btn btn btn-light d-flex p-2 p-md-3">
 
       <fb-profile :sourceProfile="activity.host"/>
@@ -42,5 +42,6 @@
     components:{
       fbProfile,
     }
+    
   }
 </script>
